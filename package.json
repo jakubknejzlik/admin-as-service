@@ -1,0 +1,12 @@
+{
+  "name": "adminr",
+  "version": "0.0.1",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.3",
+    "js-yaml": "^3.8.4"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

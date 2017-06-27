@@ -1,0 +1,17 @@
+title: Adminr example
+entities:
+  decisions:
+    name: Decision
+    list:
+      fields:
+        - name: title
+    create:
+      fields:
+        - name: title
+        - name: text
+          type: text
+    edit:
+      fields:
+        - name: title
+        - name: text
+          type: text
