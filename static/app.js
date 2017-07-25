@@ -1,26 +1,34 @@
 "use strict";
 
-var BASE_URL = "http://api.golfdecisions.knejzlik.cz";
-
 var CONFIG = window.CONFIG;
+var BASE_URL = CONFIG.url;
 
-var myApp = angular.module("myApp", ["ng-admin", "ng-admin.jwt-auth"]);
+var modules = ["ng-admin"];
+
+if (CONFIG.oauthFlow) {
+  modules.push("ng-admin.jwt-auth");
+}
+
+var myApp = angular.module("myApp", modules);
+
+if (CONFIG.oauthFlow == "resourceOwnerPasswordCredentials") {
+  myApp.config([
+    "ngAdminJWTAuthConfiguratorProvider",
+    function(ngAdminJWTAuthConfigurator) {
+      ngAdminJWTAuthConfigurator.setJWTAuthURL(`${BASE_URL}/authorize`);
+      ngAdminJWTAuthConfigurator.setCustomAuthHeader({
+        name: "Authorization",
+        template: "{{token}}"
+      });
+    }
+  ]);
+}
+
 myApp.config([
   "NgAdminConfigurationProvider",
-  "ngAdminJWTAuthConfiguratorProvider",
   "RestangularProvider",
-  function(
-    NgAdminConfigurationProvider,
-    ngAdminJWTAuthConfigurator,
-    RestangularProvider
-  ) {
+  function(NgAdminConfigurationProvider, RestangularProvider) {
     var nga = NgAdminConfigurationProvider;
-
-    ngAdminJWTAuthConfigurator.setJWTAuthURL(`${BASE_URL}/Users/login`);
-    ngAdminJWTAuthConfigurator.setCustomAuthHeader({
-      name: "Authorization",
-      template: "{{token}}"
-    });
 
     RestangularProvider.addFullRequestInterceptor(function(
       element,
@@ -80,7 +88,7 @@ myApp.config([
           .listView()
           .fields(
             entityConfig.list.fields.map(function(field) {
-              return nga.field(field.name, field.type);
+              return getField(nga, field, entities);
             })
           )
           .listActions(["edit", "delete"]);
@@ -89,7 +97,7 @@ myApp.config([
       if (entityConfig.create && entityConfig.create.fields) {
         entity.creationView().fields(
           entityConfig.create.fields.map(function(field) {
-            return nga.field(field.name, field.type);
+            return getField(nga, field, entities);
           })
         );
       }
@@ -97,25 +105,17 @@ myApp.config([
       if (entityConfig.edit && entityConfig.edit.fields) {
         entity.editionView().fields(
           entityConfig.edit.fields.map(function(field) {
-            return nga.field(field.name, field.type);
+            return getField(nga, field, entities);
           })
         );
       }
-
-      // entity
-      //   .listView()
-      //   .fields([nga.field("title")])
-      //   .listActions(["edit", "delete"]);
-      // Decision.creationView().fields([
-      //   nga.field("title").validation({ required: true }),
-      //   nga.field("text", "text")
-      // ]);
-      // Decision.editionView().fields(Decision.creationView().fields());
     });
 
-    admin.header(
-      '<div ng-controller="HeaderCtrl"><div class="navbar-header" ng-controller="HeaderCtrl"> <button type="button" class="navbar-toggle" ng-click="isCollapsed = !isCollapsed"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="#" ng-click="appController.displayHome()">{{title}}</a> </div> <ul class="nav navbar-top-links navbar-right hidden-xs"> <li uib-dropdown> <a uib-dropdown-toggle href="#" aria-expanded="true"> <i class="fa fa-user fa-lg"></i>&nbsp;{{username}}&nbsp;<i class="fa fa-caret-down"></i> </a> <ul class="dropdown-menu dropdown-user" role="menu"> <li><a href="#/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li> </ul> </li> </ul></div>'
-    );
+    if (CONFIG.oauthFlow) {
+      admin.header(
+        '<div ng-controller="HeaderCtrl"><div class="navbar-header" ng-controller="HeaderCtrl"> <button type="button" class="navbar-toggle" ng-click="isCollapsed = !isCollapsed"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="#" ng-click="appController.displayHome()">{{title}}</a> </div> <ul class="nav navbar-top-links navbar-right hidden-xs"> <li uib-dropdown> <a uib-dropdown-toggle href="#" aria-expanded="true"> <i class="fa fa-user fa-lg"></i>&nbsp;{{username}}&nbsp;<i class="fa fa-caret-down"></i> </a> <ul class="dropdown-menu dropdown-user" role="menu"> <li><a href="#/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li> </ul> </li> </ul></div>'
+      );
+    }
 
     nga.configure(admin);
   }
@@ -129,3 +129,21 @@ myApp.controller("HeaderCtrl", [
     $scope.title = CONFIG.title;
   }
 ]);
+
+function getField(nga, field, entities) {
+  var result = null;
+  switch (field.type) {
+    case "reference":
+      result = nga
+        .field(field.name, field.toMany ? "reference_many" : "reference")
+        .targetEntity(entities[field.entity])
+        .targetField(nga.field(field.targetField));
+      break;
+    default:
+      result = nga.field(field.name, field.type);
+  }
+
+  result.label(field.label || field.name);
+
+  return result;
+}

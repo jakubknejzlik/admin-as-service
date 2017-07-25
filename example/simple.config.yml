@@ -1,17 +1,47 @@
 title: Adminr example
+url: https://jsonplaceholder.typicode.com
+# oauthFlow: resourceOwnerPasswordCredentials
 entities:
-  decisions:
-    name: Decision
+  posts:
+    name: Post
     list:
       fields:
         - name: title
+        - name: userId
+          type: reference
+          toMany: false
+          entity: users
+          targetField: name
     create:
       fields:
         - name: title
-        - name: text
-          type: text
+        - name: userId
+          type: reference
+          toMany: false
+          entity: users
+          targetField: name
     edit:
       fields:
         - name: title
-        - name: text
-          type: text
+        - name: userId
+          type: reference
+          toMany: false
+          entity: users
+          targetField: name
+  users:
+    name: User
+    list:
+      fields:
+        - name: name
+        - name: username
+        - name: email
+    create:
+      fields:
+        - name: name
+        - name: username
+        - name: email
+    edit:
+      fields:
+        - name: name
+        - name: username
+        - name: email
