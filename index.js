@@ -13,13 +13,22 @@ app.get("/", (req, res, next) => {
   next();
 });
 
-app.get("/config.js", (req, res, next) => {
-  const conf = yaml.safeLoad(
-    fs.readFileSync(path.join(__dirname, "example/simple.config.yml"))
+let configuration = null;
+
+try {
+  configuration = yaml.safeLoad(
+    fs.readFileSync(
+      path.join(__dirname, process.env.CONFIG_FILE || "config.yml")
+    )
   );
+} catch (err) {
+  throw new Error("could not serve config: " + err.message);
+}
+
+app.get("/config.js", (req, res, next) => {
   res
     .type("application/javascript")
-    .send(`window.CONFIG = ${JSON.stringify(conf)}`);
+    .send(`window.CONFIG = ${JSON.stringify(configuration)}`);
 });
 app.use("/", express.static(path.join(__dirname, "static")));
 

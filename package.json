@@ -7,6 +7,7 @@
     "js-yaml": "^3.8.4"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "example": "CONFIG_FILE=example/simple.config.yml node index.js"
   }
 }
