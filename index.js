@@ -4,9 +4,12 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const yaml = require("js-yaml");
+const gracefulExit = require("express-graceful-exit");
 const Router = express.Router;
 
 const app = express();
+
+app.use(gracefulExit.middleware(app));
 
 app.get("/", (req, res, next) => {
   req.url = "/index.html";
