@@ -16,23 +16,37 @@ app.get("/", (req, res, next) => {
   next();
 });
 
-let configuration = null;
+if (process.env.NODE_ENV == "production") {
+  let configuration = null;
 
-try {
-  configuration = yaml.safeLoad(
-    fs.readFileSync(
-      path.join(__dirname, process.env.CONFIG_FILE || "config.yml")
-    )
-  );
-} catch (err) {
-  throw new Error("could not serve config: " + err.message);
+  try {
+    configuration = yaml.safeLoad(
+      fs.readFileSync(
+        path.join(__dirname, process.env.CONFIG_FILE || "config.yml")
+      )
+    );
+  } catch (err) {
+    throw new Error("could not serve config: " + err.message);
+  }
+
+  app.get("/config.js", (req, res, next) => {
+    res
+      .type("application/javascript")
+      .send(`window.CONFIG = ${JSON.stringify(configuration)}`);
+  });
+} else {
+  app.get("/config.js", (req, res, next) => {
+    let configuration = yaml.safeLoad(
+      fs.readFileSync(
+        path.join(__dirname, process.env.CONFIG_FILE || "config.yml")
+      )
+    );
+    res
+      .type("application/javascript")
+      .send(`window.CONFIG = ${JSON.stringify(configuration)}`);
+  });
 }
 
-app.get("/config.js", (req, res, next) => {
-  res
-    .type("application/javascript")
-    .send(`window.CONFIG = ${JSON.stringify(configuration)}`);
-});
 app.use("/", express.static(path.join(__dirname, "static")));
 
 const port = process.env.PORT || 8080;
