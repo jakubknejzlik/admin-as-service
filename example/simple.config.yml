@@ -1,26 +1,49 @@
-title: Onewordapp admin
-url: https://api.onewordapp.io/v1
-oauth:
-  flow: resourceOwnerPasswordCredentials
-  authorizeUrl: https://api.onewordapp.io/v1/authorize
+title: Adminr example
+url: https://jsonplaceholder.typicode.com
+# oauth:
+#   flow: resourceOwnerPasswordCredentials
+#   authorizeUrl: https://api.example.com/authorize
 entities:
-  words:
-    name: Word
+  posts:
+    name: Post
     list:
       fields:
-        - name: uid
-        - name: index
-        - name: name
+        - name: title
+        - name: userId
+          type: reference
+          toMany: false
+          entity: users
+          targetField: name
     create:
       fields:
-        - name: uid
+        - name: title
+        - name: userId
+          type: reference
+          toMany: false
+          entity: users
+          targetField: name
     edit:
       fields:
-        - name: uid
+        - name: title
+        - name: userId
+          type: reference
+          toMany: false
+          entity: users
+          targetField: name
+  users:
+    name: User
+    list:
+      fields:
         - name: name
-        - name: pronunciation
-        - name: description
-          type: text
-        - name: example
-          type: text
-        - name: audioURL
+        - name: username
+        - name: email
+    create:
+      fields:
+        - name: name
+        - name: username
+        - name: email
+    edit:
+      fields:
+        - name: name
+        - name: username
+        - name: email
