@@ -5,17 +5,19 @@ var BASE_URL = CONFIG.url;
 
 var modules = ["ng-admin"];
 
-if (CONFIG.oauthFlow) {
+if (CONFIG.oauth) {
   modules.push("ng-admin.jwt-auth");
 }
 
 var myApp = angular.module("myApp", modules);
 
-if (CONFIG.oauthFlow == "resourceOwnerPasswordCredentials") {
+if (CONFIG.oauth && CONFIG.oauth.flow == "resourceOwnerPasswordCredentials") {
   myApp.config([
     "ngAdminJWTAuthConfiguratorProvider",
     function(ngAdminJWTAuthConfigurator) {
-      ngAdminJWTAuthConfigurator.setJWTAuthURL(`${BASE_URL}/authorize`);
+      ngAdminJWTAuthConfigurator.setJWTAuthURL(
+        CONFIG.oauth.authorizeUrl || `${BASE_URL}/authorize`
+      );
       ngAdminJWTAuthConfigurator.setCustomAuthHeader({
         name: "Authorization",
         template: "{{token}}"
@@ -111,7 +113,7 @@ myApp.config([
       }
     });
 
-    if (CONFIG.oauthFlow) {
+    if (CONFIG.oauth) {
       admin.header(
         '<div ng-controller="HeaderCtrl"><div class="navbar-header" ng-controller="HeaderCtrl"> <button type="button" class="navbar-toggle" ng-click="isCollapsed = !isCollapsed"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="#" ng-click="appController.displayHome()">{{title}}</a> </div> <ul class="nav navbar-top-links navbar-right hidden-xs"> <li uib-dropdown> <a uib-dropdown-toggle href="#" aria-expanded="true"> <i class="fa fa-user fa-lg"></i>&nbsp;{{username}}&nbsp;<i class="fa fa-caret-down"></i> </a> <ul class="dropdown-menu dropdown-user" role="menu"> <li><a href="#/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li> </ul> </li> </ul></div>'
       );
