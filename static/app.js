@@ -24,6 +24,8 @@ if (CONFIG.oauth && CONFIG.oauth.flow == "resourceOwnerPasswordCredentials") {
       });
     }
   ]);
+} else {
+  console.error("unkown oauth flow type", CONFIG.oauth.flow);
 }
 
 myApp.config([
