@@ -20,7 +20,7 @@ if (CONFIG.oauth && CONFIG.oauth.flow == "resourceOwnerPasswordCredentials") {
       );
       ngAdminJWTAuthConfigurator.setCustomAuthHeader({
         name: "Authorization",
-        template: "{{token}}"
+        template: "Bearer {{token}}"
       });
     }
   ]);
