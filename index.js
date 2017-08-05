@@ -16,15 +16,29 @@ app.get("/", (req, res, next) => {
   next();
 });
 
+const interpolateEnvVars = string => {
+  for (let key in process.env) {
+    let value = process.env[key];
+    string = string.replace(new RegExp(`\\\${${key}}`, "gi"), value);
+  }
+  return string;
+};
+
+const getConfig = () => {
+  let content = fs.readFileSync(
+    path.join(__dirname, process.env.CONFIG_FILE || "config.yml"),
+    "utf-8"
+  );
+  content = interpolateEnvVars(content);
+
+  return content;
+};
+
 if (process.env.NODE_ENV == "production") {
   let configuration = null;
 
   try {
-    configuration = yaml.safeLoad(
-      fs.readFileSync(
-        path.join(__dirname, process.env.CONFIG_FILE || "config.yml")
-      )
-    );
+    configuration = yaml.safeLoad(getConfig());
   } catch (err) {
     throw new Error("could not serve config: " + err.message);
   }
@@ -36,11 +50,7 @@ if (process.env.NODE_ENV == "production") {
   });
 } else {
   app.get("/config.js", (req, res, next) => {
-    let configuration = yaml.safeLoad(
-      fs.readFileSync(
-        path.join(__dirname, process.env.CONFIG_FILE || "config.yml")
-      )
-    );
+    let configuration = yaml.safeLoad(getConfig());
     res
       .type("application/javascript")
       .send(`window.CONFIG = ${JSON.stringify(configuration)}`);

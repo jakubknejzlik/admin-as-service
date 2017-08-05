@@ -1,5 +1,6 @@
 title: Adminr example
-url: https://jsonplaceholder.typicode.com
+url: ${API_URL}
+# url: https://jsonplaceholder.typicode.com
 # oauth:
 #   flow: resourceOwnerPasswordCredentials
 #   authorizeUrl: https://api.example.com/authorize
