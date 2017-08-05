@@ -142,12 +142,15 @@ function getField(nga, field, entities) {
   switch (field.type) {
     case "reference":
       result = nga
-        .field(field.name, field.toMany ? "reference_many" : "reference")
+        .field(
+          field.attribute || field.name,
+          field.toMany ? "reference_many" : "reference"
+        )
         .targetEntity(entities[field.entity])
         .targetField(nga.field(field.targetField));
       break;
     default:
-      result = nga.field(field.name, field.type);
+      result = nga.field(field.attribute || field.name, field.type);
   }
 
   result.label(field.label || field.name);
