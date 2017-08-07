@@ -153,7 +153,9 @@ function getField(nga, field, entities) {
       result = nga.field(field.attribute || field.name, field.type);
   }
 
-  result.label(field.label || field.name);
+  if (field.label) {
+    result.label(field.label);
+  }
 
   return result;
 }
