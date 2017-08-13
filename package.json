@@ -5,10 +5,15 @@
   "dependencies": {
     "express": "^4.15.3",
     "express-graceful-exit": "^0.4.0",
-    "js-yaml": "^3.8.4"
+    "js-yaml": "^3.8.4",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
   },
   "scripts": {
     "start": "node index.js",
     "example": "CONFIG_FILE=example/simple.config.yml node index.js"
+  },
+  "devDependencies": {
+    "admin-on-rest": "^1.2.2"
   }
 }

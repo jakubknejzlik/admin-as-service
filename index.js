@@ -57,7 +57,7 @@ if (process.env.NODE_ENV == "production") {
   });
 }
 
-app.use("/", express.static(path.join(__dirname, "static")));
+app.use("/", express.static(path.join(__dirname, "static2")));
 
 const port = process.env.PORT || 8080;
 app.listen(port, err => {
