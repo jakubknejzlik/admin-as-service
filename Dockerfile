@@ -4,6 +4,6 @@ COPY . /code
 
 WORKDIR /code
 
-RUN rm -rf node_modules && npm install --unsafe-perm
+RUN apk add --update git && rm -rf node_modules && npm install --unsafe-perm
 
 ENTRYPOINT ["npm","start"]
