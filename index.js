@@ -68,7 +68,7 @@ if (process.env.NODE_ENV == "production") {
 
 app.use("/", express.static(__dirname));
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 app.listen(port, err => {
   console.log(`listening on ${port}, error: ${err}`);
 });
