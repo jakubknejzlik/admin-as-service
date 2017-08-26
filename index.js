@@ -25,10 +25,19 @@ const interpolateEnvVars = string => {
 };
 
 const getConfig = () => {
-  let content = fs.readFileSync(
-    path.join(__dirname, process.env.CONFIG_FILE || "config.yml"),
-    "utf-8"
-  );
+  let content = null;
+  if (process.env.CONFIG) {
+    try {
+      content = new Buffer(process.env.CONFIG, "base64").toString("utf-8");
+    } catch (err) {
+      content = process.env.CONFIG;
+    }
+  } else {
+    content = fs.readFileSync(
+      path.join(__dirname, process.env.CONFIG_FILE || "config.yml"),
+      "utf-8"
+    );
+  }
   content = interpolateEnvVars(content);
 
   return content;

@@ -90,32 +90,26 @@ myApp.config([
       var entity = entities[entityName];
       var entityConfig = CONFIG.entities[entityName];
 
-      if (entityConfig.list && entityConfig.list.fields) {
-        entity
-          .listView()
-          .fields(
-            entityConfig.list.fields.map(function(field) {
-              return getField(nga, field, entities);
-            })
-          )
-          .listActions(["edit", "delete"]);
-      }
-
-      if (entityConfig.create && entityConfig.create.fields) {
-        entity.creationView().fields(
-          entityConfig.create.fields.map(function(field) {
+      entity
+        .listView()
+        .fields(
+          getFields(entityConfig, "list").map(function(field) {
             return getField(nga, field, entities);
           })
-        );
-      }
+        )
+        .listActions(["edit", "delete"]);
 
-      if (entityConfig.edit && entityConfig.edit.fields) {
-        entity.editionView().fields(
-          entityConfig.edit.fields.map(function(field) {
-            return getField(nga, field, entities);
-          })
-        );
-      }
+      entity.creationView().fields(
+        getFields(entityConfig, "create").map(function(field) {
+          return getField(nga, field, entities);
+        })
+      );
+
+      entity.editionView().fields(
+        getFields(entityConfig, "edit").map(function(field) {
+          return getField(nga, field, entities);
+        })
+      );
     });
 
     if (CONFIG.oauth) {
@@ -136,6 +130,13 @@ myApp.controller("HeaderCtrl", [
     $scope.title = CONFIG.title;
   }
 ]);
+
+function getFields(entity, type) {
+  if (entity[type] && entity[type].fields) {
+    return entity[type].fields;
+  }
+  return entity.fields || [];
+}
 
 function getField(nga, field, entities) {
   var result = null;
