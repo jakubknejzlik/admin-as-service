@@ -30,8 +30,9 @@ function createAdmin(nga, config) {
     if (entityConfig.list && entityConfig.list.filters) {
       var filters = [];
       for (var key in entityConfig.list.filters) {
-        var filter = entityConfig.list.filters[key];
-        filters.push(nga.field(key).label(filter.label).pinned(filter.pinned));
+        var filterField = entityConfig.list.filters[key];
+        filterField.attribute = key;
+        filters.push(getField(nga, filterField, entities));
       }
       listView.filters(filters);
     }
@@ -90,9 +91,10 @@ function getField(nga, field, entities) {
       result = nga.field(field.attribute || field.name, field.type);
   }
 
-  if (field.label) {
-    result.label(field.label);
-  }
+  if (field.label) result.label(field.label);
+
+  if (field.pinned) result.pinned(field.pinned);
+  if (field.attributes) result.attributes(field.attributes);
 
   return result;
 }

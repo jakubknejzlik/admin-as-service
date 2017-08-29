@@ -3,8 +3,16 @@
     {
       "id": 1,
       "title": "Example post",
-      "user_id": "1"
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "title": "Other post",
+      "user_id": 2
     }
   ],
-  "users": [{ "id": 1, "firstname": "John", "lastname": "Doe" }]
+  "users": [
+    { "id": 1, "firstname": "John", "lastname": "Doe" },
+    { "id": 2, "firstname": "Jane", "lastname": "Siri" }
+  ]
 }

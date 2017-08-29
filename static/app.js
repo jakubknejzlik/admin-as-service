@@ -58,6 +58,16 @@ myApp.config([
         delete params._sortField;
         delete params._sortDir;
       }
+
+      if (operation == "getList") {
+        if (params._filters) {
+          for (var filter in params._filters) {
+            params[filter] = params._filters[filter];
+          }
+          delete params._filters;
+        }
+      }
+
       return { params: params };
     });
 

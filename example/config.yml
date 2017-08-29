@@ -13,6 +13,13 @@ entities:
         q:
           label: Search
           pinned: true
+          attributes:
+            placeholder: search text
+        user_id:
+          label: User
+          type: reference
+          entity: users
+          targetField: firstname
     create:
       title: My custom posts create title
     edit:
@@ -24,11 +31,11 @@ entities:
         options:
           - { value: US, label: USA }
           - { value: FR, label: France }
-      - attribute: userId
+      - attribute: user_id
         type: reference
         toMany: false
         entity: users
-        targetField: name
+        targetField: firstname
   users:
     name: User
     fields:
