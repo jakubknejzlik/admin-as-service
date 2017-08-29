@@ -15,7 +15,7 @@ function createAdmin(nga, config) {
     var entityConfig = config.entities[entityName];
 
     entity.label(entityConfig.name);
-    entity
+    var listView = entity
       .listView()
       .title(
         (entityConfig.list && entityConfig.list.title) || entityConfig.name
@@ -26,6 +26,15 @@ function createAdmin(nga, config) {
         })
       )
       .listActions(["edit", "delete"]);
+
+    if (entityConfig.list && entityConfig.list.filters) {
+      var filters = [];
+      for (var key in entityConfig.list.filters) {
+        var filter = entityConfig.list.filters[key];
+        filters.push(nga.field(key).label(filter.label).pinned(filter.pinned));
+      }
+      listView.filters(filters);
+    }
 
     entity
       .creationView()
@@ -71,6 +80,11 @@ function getField(nga, field, entities) {
         )
         .targetEntity(entities[field.entity])
         .targetField(nga.field(field.targetField));
+      break;
+    case "select":
+      result = nga
+        .field(field.attribute || field.name, "choices")
+        .choices(field.options);
       break;
     default:
       result = nga.field(field.attribute || field.name, field.type);

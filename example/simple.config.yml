@@ -9,12 +9,21 @@ entities:
     name: My Post
     list:
       title: My custom posts title
+      filters:
+        q:
+          label: Search
+          pinned: true
     create:
       title: My custom posts create title
     edit:
       title: My custom posts edit title
     fields:
       - attribute: title
+      - attribute: state
+        type: select
+        options:
+          - { value: US, label: USA }
+          - { value: FR, label: France }
       - attribute: userId
         type: reference
         toMany: false
