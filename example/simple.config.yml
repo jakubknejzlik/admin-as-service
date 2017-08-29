@@ -6,7 +6,7 @@ url: ${API_URL}
 #   authorizeUrl: https://api.example.com/authorize
 entities:
   posts:
-    name: Post
+    name: My Post
     fields:
       - attribute: title
       - attribute: userId

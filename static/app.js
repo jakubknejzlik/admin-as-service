@@ -91,6 +91,7 @@ myApp.config([
       var entityConfig = CONFIG.entities[entityName];
 
       entity
+        .label(entityConfig.name)
         .listView()
         .fields(
           getFields(entityConfig, "list").map(function(field) {
