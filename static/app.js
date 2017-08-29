@@ -114,9 +114,15 @@ myApp.config([
     });
 
     if (CONFIG.oauth) {
-      admin.header(
-        '<div ng-controller="HeaderCtrl"><div class="navbar-header" ng-controller="HeaderCtrl"> <button type="button" class="navbar-toggle" ng-click="isCollapsed = !isCollapsed"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="#" ng-click="appController.displayHome()">{{title}}</a> </div> <ul class="nav navbar-top-links navbar-right hidden-xs"> <li uib-dropdown> <a uib-dropdown-toggle href="#" aria-expanded="true"> <i class="fa fa-user fa-lg"></i>&nbsp;{{username}}&nbsp;<i class="fa fa-caret-down"></i> </a> <ul class="dropdown-menu dropdown-user" role="menu"> <li><a href="#/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li> </ul> </li> </ul></div>'
-      );
+      admin.header(`<div class="navbar-header" style="float: none">
+            <button type="button" class="navbar-toggle" ng-click="isCollapsed = !isCollapsed">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <ul class="nav navbar-top-links navbar-right" style="float: right;"> <li uib-dropdown> <a uib-dropdown-toggle href="#" aria-expanded="true"> <i class="fa fa-user fa-lg"></i>&nbsp;{{username}}&nbsp;<i class="fa fa-caret-down"></i> </a> <ul class="dropdown-menu dropdown-user" role="menu"> <li><a href="#/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li> </ul> </li> </ul>
+            <a href="#" ng-click="appController.displayHome()" class="navbar-brand">{{ ::appController.applicationName }}</a>
+        </div>`);
     }
 
     nga.configure(admin);
