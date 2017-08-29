@@ -75,55 +75,25 @@ myApp.config([
       return data;
     });
 
-    var admin = nga.application(CONFIG.title).baseApiUrl(`${BASE_URL}/`);
+    var admin = createAdmin(nga, CONFIG);
 
-    var entities = {};
-    var entityNames = Object.keys(CONFIG.entities);
-    entityNames.forEach(function(entityName) {
-      var entity = nga.entity(entityName);
-      entity.updateMethod("patch");
-      entities[entityName] = entity;
-      admin.addEntity(entity);
-    });
+    admin.baseApiUrl(`${BASE_URL}/`);
 
-    entityNames.forEach(function(entityName) {
-      var entity = entities[entityName];
-      var entityConfig = CONFIG.entities[entityName];
+    var logoutDropdown = CONFIG.oauth
+      ? `<ul class="nav navbar-top-links navbar-right" style="float: right;"> <li uib-dropdown> <a uib-dropdown-toggle href="#" aria-expanded="true"> <i class="fa fa-user fa-lg"></i>&nbsp;{{username}}&nbsp;<i class="fa fa-caret-down"></i> </a> <ul class="dropdown-menu dropdown-user" role="menu"> <li><a href="#/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li> </ul> </li> </ul>`
+      : "";
 
-      entity
-        .label(entityConfig.name)
-        .listView()
-        .fields(
-          getFields(entityConfig, "list").map(function(field) {
-            return getField(nga, field, entities);
-          })
-        )
-        .listActions(["edit", "delete"]);
-
-      entity.creationView().fields(
-        getFields(entityConfig, "create").map(function(field) {
-          return getField(nga, field, entities);
-        })
-      );
-
-      entity.editionView().fields(
-        getFields(entityConfig, "edit").map(function(field) {
-          return getField(nga, field, entities);
-        })
-      );
-    });
-
-    if (CONFIG.oauth) {
-      admin.header(`<div class="navbar-header" style="float: none">
+    admin.header(
+      `<div class="navbar-header" style="float: none">
             <button type="button" class="navbar-toggle" ng-click="isCollapsed = !isCollapsed">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
-            </button>
-            <ul class="nav navbar-top-links navbar-right" style="float: right;"> <li uib-dropdown> <a uib-dropdown-toggle href="#" aria-expanded="true"> <i class="fa fa-user fa-lg"></i>&nbsp;{{username}}&nbsp;<i class="fa fa-caret-down"></i> </a> <ul class="dropdown-menu dropdown-user" role="menu"> <li><a href="#/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li> </ul> </li> </ul>
-            <a href="#" ng-click="appController.displayHome()" class="navbar-brand">{{ ::appController.applicationName }}</a>
-        </div>`);
-    }
+            </button>` +
+        logoutDropdown +
+        `<a href="#" ng-click="appController.displayHome()" class="navbar-brand">{{ ::appController.applicationName }}</a>
+        </div>`
+    );
 
     nga.configure(admin);
   }
@@ -137,33 +107,3 @@ myApp.controller("HeaderCtrl", [
     $scope.title = CONFIG.title;
   }
 ]);
-
-function getFields(entity, type) {
-  if (entity[type] && entity[type].fields) {
-    return entity[type].fields;
-  }
-  return entity.fields || [];
-}
-
-function getField(nga, field, entities) {
-  var result = null;
-  switch (field.type) {
-    case "reference":
-      result = nga
-        .field(
-          field.attribute || field.name,
-          field.toMany ? "reference_many" : "reference"
-        )
-        .targetEntity(entities[field.entity])
-        .targetField(nga.field(field.targetField));
-      break;
-    default:
-      result = nga.field(field.attribute || field.name, field.type);
-  }
-
-  if (field.label) {
-    result.label(field.label);
-  }
-
-  return result;
-}

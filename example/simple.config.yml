@@ -7,6 +7,12 @@ url: ${API_URL}
 entities:
   posts:
     name: My Post
+    list:
+      title: My custom posts title
+    create:
+      title: My custom posts create title
+    edit:
+      title: My custom posts edit title
     fields:
       - attribute: title
       - attribute: userId
