@@ -13,7 +13,6 @@
   },
   "scripts": {
     "start": "node index.js",
-    "example-simple": "API_URL=https://jsonplaceholder.typicode.com PORT=8080 CONFIG_FILE=example/simple.config.yml node index.js",
-    "example-custom": "API_URL=https://jsonplaceholder.typicode.com PORT=8080 CONFIG_FILE=example/custom.config.yml node index.js"
+    "example": "API_URL=https://jsonplaceholder.typicode.com PORT=8080 CONFIG_FILE=example/config.yml node index.js"
   }
 }
