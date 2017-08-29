@@ -32,10 +32,10 @@ entities:
   users:
     name: User
     fields:
-      - attribute: name
-      - attribute: username
+      - attribute: firstname
+      - attribute: lastname
       - attribute: email
     list:
       fields:
-        - attribute: name
-        - attribute: username
+        - attribute: firstname
+        - attribute: lastname

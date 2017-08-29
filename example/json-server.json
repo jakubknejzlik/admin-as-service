@@ -1,0 +1,10 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Example post",
+      "user_id": "1"
+    }
+  ],
+  "users": [{ "id": 1, "firstname": "John", "lastname": "Doe" }]
+}

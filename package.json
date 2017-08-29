@@ -13,6 +13,11 @@
   },
   "scripts": {
     "start": "node index.js",
-    "example": "API_URL=https://jsonplaceholder.typicode.com PORT=8080 CONFIG_FILE=example/config.yml node index.js"
+    "example": "parallelshell \"npm run example-server\" \"npm run example-admin\"",
+    "example-server": "cp example/json-server.json json-server.json; json-server --watch json-server.json",
+    "example-admin": "API_URL=http://localhost:3000 PORT=8080 CONFIG_FILE=example/config.yml node index.js"
+  },
+  "devDependencies": {
+    "json-server": "^0.12.0"
   }
 }
