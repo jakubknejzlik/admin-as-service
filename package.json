@@ -14,7 +14,7 @@
   "scripts": {
     "start": "node index.js",
     "example": "parallelshell \"npm run example-server\" \"npm run example-admin\"",
-    "example-server": "cp example/json-server.json json-server.json; json-server --watch json-server.json",
+    "example-server": "cp example/json-server.json db.json; json-server --watch db.json",
     "example-admin": "API_URL=http://localhost:3000 PORT=8080 CONFIG_FILE=example/config.yml node index.js"
   },
   "devDependencies": {
