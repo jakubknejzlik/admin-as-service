@@ -66,6 +66,13 @@ myApp.config([
           }
           delete params._filters;
         }
+
+        var fieldNames = [];
+        var fields = getFields(CONFIG.entities[what], "edit");
+        fields.forEach(function(field) {
+          fieldNames.push(field.attribute);
+        });
+        params.fields = fieldNames.join(",");
       }
 
       if (operation == "patch") {
@@ -77,7 +84,6 @@ myApp.config([
         element = newElement;
       }
 
-      console.log("?", { params: params, element: element });
       return { params: params, element: element };
     });
 

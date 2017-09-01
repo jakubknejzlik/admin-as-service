@@ -15,6 +15,7 @@ entities:
           pinned: true
           attributes:
             placeholder: search text
+            searchColumns: title
         where[user_id]:
           label: User
           type: reference
