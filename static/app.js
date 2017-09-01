@@ -68,7 +68,17 @@ myApp.config([
         }
       }
 
-      return { params: params };
+      if (operation == "patch") {
+        var newElement = {};
+        var fields = getFields(CONFIG.entities[what], "edit");
+        fields.forEach(function(field) {
+          newElement[field.attribute] = element[field.attribute];
+        });
+        element = newElement;
+      }
+
+      console.log("?", { params: params, element: element });
+      return { params: params, element: element };
     });
 
     RestangularProvider.addResponseInterceptor(function(
