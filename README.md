@@ -40,6 +40,7 @@ Each field is described by object with following structure:
   fields:
     attribute: <columnName>
     type: string # type of field (string, text, date, select, reference)
+    label: <label> # human friendly name of field (default: attribute value)
 ```
 
 ### Select field (enum)
