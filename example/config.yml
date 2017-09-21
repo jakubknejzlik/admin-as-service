@@ -1,4 +1,4 @@
-title: Adminr example
+title: admin-as-service example
 url: ${API_URL}
 # url: https://jsonplaceholder.typicode.com
 # oauth:

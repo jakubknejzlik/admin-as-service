@@ -7,6 +7,9 @@ Generated administration for RESTful api.
 You define list of entities that should be displayed. These are mapped to api endpoints.
 
 ```
+title: admin-as-service example
+url: <base api url>
+oauth: <oauth configuration>
 entities:
   companies: # key associated to entity (also mapped to endpoint /{key})
     name: Company # entity name displayed in menu item/titles
@@ -82,4 +85,12 @@ For list you can configure filtering as list of filters:
           type: reference
           entity: users
           targetField: firstname
+```
+
+## OAuth configuration
+
+```
+oauth:
+  flow: resourceOwnerPasswordCredentials
+  authorizeUrl: https://api.example.com/authorize
 ```
