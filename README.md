@@ -41,6 +41,7 @@ Each field is described by object with following structure:
     attribute: <columnName>
     type: string # type of field (string, text, date, select, reference)
     label: <label> # human friendly name of field (default: attribute value)
+    format: $0,0.00 # formatted number for numeric fields
 ```
 
 ### Choices field (enum/Select)

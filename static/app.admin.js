@@ -100,6 +100,9 @@ function getField(nga, field, entities) {
       break;
     default:
       result = nga.field(field.attribute || field.name, field.type);
+      if (field.format) {
+        result.format(field.format);
+      }
   }
 
   if (field.label) result.label(field.label);

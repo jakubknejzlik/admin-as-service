@@ -43,7 +43,12 @@ entities:
       - attribute: firstname
       - attribute: lastname
       - attribute: email
+      - attribute: salary
+        type: float
     list:
       fields:
         - attribute: firstname
         - attribute: lastname
+        - attribute: salary
+          type: float
+          format: $0,0.00
