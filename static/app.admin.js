@@ -87,6 +87,17 @@ function getField(nga, field, entities) {
         .field(field.attribute || field.name, "choices")
         .choices(field.options);
       break;
+    case "choice":
+      result = nga
+        .field(field.attribute || field.name, "choice")
+        .choices(field.options);
+      break;
+
+    case "choices":
+      result = nga
+        .field(field.attribute || field.name, "choices")
+        .choices(field.options);
+      break;
     default:
       result = nga.field(field.attribute || field.name, field.type);
   }

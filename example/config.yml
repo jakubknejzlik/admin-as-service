@@ -28,7 +28,7 @@ entities:
     fields:
       - attribute: title
       - attribute: state
-        type: select
+        type: choice
         options:
           - { value: US, label: USA }
           - { value: FR, label: France }

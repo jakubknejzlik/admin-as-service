@@ -43,13 +43,13 @@ Each field is described by object with following structure:
     label: <label> # human friendly name of field (default: attribute value)
 ```
 
-### Select field (enum)
+### Choices field (enum/Select)
 
 ```
-...
+... deprecated, use choice/choices
   fields:
     attribute: state
-    type: select
+    type: choice # choice/choices, select is deprecated
     options:
       - { value: US, label: USA }
       - { value: FR, label: France }
