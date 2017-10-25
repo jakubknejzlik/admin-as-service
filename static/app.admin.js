@@ -46,7 +46,11 @@ function createAdmin(nga, config) {
         getFields(entityConfig, "create").map(function(field) {
           return getField(nga, field, entities);
         })
-      );
+      )
+      .onSubmitSuccess(function() {
+        window.history.back();
+        return false;
+      });
 
     entity
       .editionView()
@@ -57,7 +61,11 @@ function createAdmin(nga, config) {
         getFields(entityConfig, "edit").map(function(field) {
           return getField(nga, field, entities);
         })
-      );
+      )
+      .onSubmitSuccess(function() {
+        window.history.back();
+        return false;
+      });
   });
 
   return admin;
