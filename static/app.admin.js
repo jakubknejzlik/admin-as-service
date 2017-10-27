@@ -25,7 +25,8 @@ function createAdmin(nga, config) {
           return getField(nga, field, entities);
         })
       )
-      .listActions(["edit", "delete"]);
+      .listActions(getListActions(entityConfig, "list"))
+      .actions(getActions(entityConfig, "list"));
 
     if (entityConfig.list && entityConfig.list.filters) {
       var filters = [];
@@ -50,7 +51,8 @@ function createAdmin(nga, config) {
       .onSubmitSuccess(function() {
         window.history.back();
         return false;
-      });
+      })
+      .actions(getActions(entityConfig, "create"));
 
     entity
       .editionView()
@@ -65,7 +67,8 @@ function createAdmin(nga, config) {
       .onSubmitSuccess(function() {
         window.history.back();
         return false;
-      });
+      })
+      .actions(getActions(entityConfig, "edit"));
   });
 
   return admin;
@@ -76,6 +79,49 @@ function getFields(entity, type) {
     return entity[type].fields;
   }
   return entity.fields || [];
+}
+
+function getListActions(entity, type) {
+  return _getActions(entity, type, "listActions", "xs", ["edit", "delete"]);
+}
+
+function getActions(entity, type) {
+  return _getActions(entity, type, "actions", "md", null);
+}
+
+function _getActions(entity, type, subType, size, defaultValue) {
+  var actions = defaultValue;
+  if (entity[type] && entity[type][subType]) {
+    actions = entity[type][subType];
+  } else if (entity[subType]) {
+    actions = entity[subType];
+  }
+
+  if (actions === null) {
+    return null;
+  }
+
+  actions = actions.map(function(action) {
+    if (typeof action === "string") {
+      return action;
+    }
+    var style = action.style || "default";
+    var icon = action.icon;
+
+    var button = "<ma-" + action.action + "-button ";
+    button += 'entry="entry" size="' + size + '" ';
+    for (var key in action) {
+      button +=
+        inflection.dasherize(inflection.dasherize(key)) +
+        '="' +
+        action[key] +
+        '" ';
+    }
+    button += "></ma-" + action.action + "-button>";
+    return button;
+  });
+
+  return actions;
 }
 
 function getField(nga, field, entities) {

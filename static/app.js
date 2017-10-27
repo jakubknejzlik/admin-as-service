@@ -133,3 +133,29 @@ myApp.controller("HeaderCtrl", [
     $scope.title = CONFIG.title;
   }
 ]);
+
+myApp.directive("maRedirectButton", function() {
+  return {
+    scope: {
+      entry: "=",
+      title: "@",
+      style: "@",
+      size: "@",
+      icon: "@",
+      url: "@",
+      target: "@"
+    },
+    link: function(scope, element, attrs, tabsCtrl) {
+      scope.style = scope.style || "default";
+      scope.click = function() {
+        if (scope.target == "blank") {
+          window.open(scope.url);
+        } else {
+          window.location.href = scope.url;
+        }
+      };
+    },
+    template:
+      '<a class="btn btn-{{style}} btn-{{size}}" ng-click="click()"><span class="glyphicon glyphicon-{{icon}}" aria-hidden="true"></span> {{title}}</a>'
+  };
+});

@@ -12,6 +12,18 @@ url: <base api url>
 oauth: <oauth configuration>
 entities:
   companies: # key associated to entity (also mapped to endpoint /{key})
+    listActions: # list of buttons for edit
+      - edit # predefined button, redirect to edit form
+      - delete # predefined button, delete record
+      - title: test # custom created button with redirect action
+        icon: new-window
+        action: redirect
+        url: 'https://www.google.cz/?ei={{entry.values.id}}'
+        target: blank
+    actions: # actions visible in page header (in list, edit, create screens)
+      - create 
+      - export
+      - filter
     name: Company # entity name displayed in menu item/titles
     fields: # default list of fields
       - <field configuration>
@@ -87,6 +99,40 @@ For list you can configure filtering as list of filters:
           type: reference
           entity: users
           targetField: firstname
+```
+
+## Actions configuration
+
+For every page you can configure buttons displayed in header.
+
+```
+...
+    list:
+      actions:
+        - title: test
+          icon: new-window
+          action: redirect
+          url: 'https://www.google.cz/?ei={{entry.values.id}}' # you can extract data from entity
+          target: blank
+        - delete
+```
+
+## List actions configuration
+
+The same way you specify page action, you can also specify list actions (buttons in table).
+
+```
+...
+    list:
+      listActions:
+        - title: test
+          icon: new-window
+          action: redirect
+          url: 'https://www.google.cz/?ei={{entry.values.id}}' # you can extract data from entity
+          target: blank
+        - filter
+        - edit
+        - delete
 ```
 
 ## OAuth configuration

@@ -1,13 +1,21 @@
 title: admin-as-service example
-url: ${API_URL}
-# url: https://jsonplaceholder.typicode.com
-# oauth:
-#   flow: resourceOwnerPasswordCredentials
-#   authorizeUrl: https://api.example.com/authorize
+url: '${API_URL}'
 entities:
   posts:
     name: My Post
     list:
+      listActions:
+        - title: test
+          icon: new-window
+          action: redirect
+          url: 'https://www.google.cz/?ei={{entry.values.id}}'
+          target: blank
+        - edit
+        - delete
+      actions:
+        - create
+        - export
+        - filter
       title: My custom posts title
       filters:
         q:
@@ -16,22 +24,29 @@ entities:
           attributes:
             placeholder: search text
             searchColumns: title
-        where[user_id]:
+        'where[user_id]':
           label: User
           type: reference
           entity: users
           targetField: firstname
     create:
+      actions:
+        - list
       title: My custom posts create title
     edit:
+      actions:
+        - delete
+        - list
       title: My custom posts edit title
     fields:
       - attribute: title
       - attribute: state
         type: choice
         options:
-          - { value: US, label: USA }
-          - { value: FR, label: France }
+          - value: US
+            label: USA
+          - value: FR
+            label: France
       - attribute: user_id
         type: reference
         toMany: false
@@ -51,4 +66,4 @@ entities:
         - attribute: lastname
         - attribute: salary
           type: float
-          format: $0,0.00
+          format: '$0,0.00'

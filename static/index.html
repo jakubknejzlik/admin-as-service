@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <title></title>
     <link rel="stylesheet" href="node_modules/ng-admin/build/ng-admin.min.css">
@@ -8,14 +9,17 @@
     <script src="node_modules/moment/min/moment.min.js"></script>
     <script src="node_modules/numeral/min/numeral.min.js"></script>
     <script src="node_modules/ng-admin/build/ng-admin.min.js"></script>
-    <script src="static/ng-admin.jwt-auth.min.js"></script>
+    <script src="static/js/ng-admin.jwt-auth.min.js"></script>
+    <script src="static/js/inflection.min.js"></script>
     <script src="config.js"></script>
     <script src="static/app.admin.js"></script>
     <script src="static/app.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
+
 <body ng-app="myApp">
-<div ui-view></div>
-<div ui-view="ng-admin"></div>
+    <div ui-view></div>
+    <div ui-view="ng-admin"></div>
 </body>
+
 </html>
