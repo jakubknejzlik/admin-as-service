@@ -142,3 +142,9 @@ oauth:
   flow: resourceOwnerPasswordCredentials
   authorizeUrl: https://api.example.com/authorize
 ```
+
+
+## Fullscreen mode
+
+You can also use application in fullscreen mode (only content is display, navigation bar and side menu is hidden).
+Application switch to this mode when `fullscreen=true` substring is detected in URL.

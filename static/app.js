@@ -159,3 +159,9 @@ myApp.directive("maRedirectButton", function() {
       '<a class="btn btn-{{style}} btn-{{size}}" ng-click="click()"><span class="glyphicon glyphicon-{{icon}}" aria-hidden="true"></span> {{title}}</a>'
   };
 });
+
+myApp.controller("FullScreenCtrl", function($scope) {
+  $scope.isFullscreen = function() {
+    return window.location.href.indexOf("fullscreen=true") !== -1;
+  };
+});

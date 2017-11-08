@@ -10,3 +10,11 @@ th.ng-admin-column-actions {
 .sidebar {
   margin-top: 1px;
 }
+
+.fullscreen #header-nav {
+  display: none;
+}
+
+.fullscreen #page-wrapper {
+  margin-left: 0px;
+}
