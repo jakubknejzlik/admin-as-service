@@ -11,7 +11,8 @@ th.ng-admin-column-actions {
   margin-top: 1px;
 }
 
-.fullscreen #header-nav {
+.fullscreen #header-nav,
+.fullscreen .view_actions {
   display: none;
 }
 
