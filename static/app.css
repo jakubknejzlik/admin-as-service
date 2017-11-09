@@ -12,7 +12,7 @@ th.ng-admin-column-actions {
 }
 
 .fullscreen #header-nav,
-.fullscreen .view_actions {
+.fullscreen ma-view-actions {
   display: none;
 }
 
