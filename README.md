@@ -15,6 +15,7 @@ entities:
     identifier: id # the field to be used as identifier
     readonly: false # read-only entity doesn't allow mutations
     endpoint: "api/companies" # endpoint for all views of this entity
+    hidden: false # doesn't diplay entity in left menu
     listActions: # list of buttons for edit
       - edit # predefined button, redirect to edit form
       - delete # predefined button, delete record

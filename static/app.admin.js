@@ -19,6 +19,7 @@ function createAdmin(nga, config) {
     }
 
     entities[entityName] = entity;
+
     admin.addEntity(entity);
   });
 
@@ -82,6 +83,16 @@ function createAdmin(nga, config) {
       })
       .actions(getActions(entityConfig, "edit"));
   });
+
+  var menu = nga.menu();
+  for (var key in entities) {
+    var entity = entities[key];
+    var entityConfig = config.entities[key];
+    if (!entityConfig.hidden) {
+      menu.addChild(nga.menu(entity));
+    }
+  }
+  admin.menu(menu);
 
   return admin;
 }

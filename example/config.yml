@@ -57,6 +57,7 @@ entities:
   users:
     name: User
     readonly: true
+    hidden: true
     fields:
       - attribute: firstname
       - attribute: lastname
