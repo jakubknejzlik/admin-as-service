@@ -5,7 +5,19 @@ function createAdmin(nga, config) {
   var entityNames = Object.keys(config.entities);
   entityNames.forEach(function(entityName) {
     var entity = nga.entity(entityName);
+    var entityConfig = config.entities[entityName];
     entity.updateMethod("patch");
+
+    if (entityConfig.endpoint) {
+      entity.url(entityConfig.endpoint);
+    }
+    if (entityConfig.readonly) {
+      entity.readOnly();
+    }
+    if (entityConfig.identifier) {
+      entity.identifier(nga.field(entityConfig.identifier));
+    }
+
     entities[entityName] = entity;
     admin.addEntity(entity);
   });

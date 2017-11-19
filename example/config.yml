@@ -3,6 +3,8 @@ url: '${API_URL}'
 entities:
   posts:
     name: My Post
+    endpoint: "posts"
+    identifier: id
     list:
       listActions:
         - title: test
@@ -54,6 +56,7 @@ entities:
         targetField: firstname
   users:
     name: User
+    readonly: true
     fields:
       - attribute: firstname
       - attribute: lastname

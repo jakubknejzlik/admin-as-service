@@ -12,6 +12,9 @@ url: <base api url>
 oauth: <oauth configuration>
 entities:
   companies: # key associated to entity (also mapped to endpoint /{key})
+    identifier: id # the field to be used as identifier
+    readonly: false # read-only entity doesn't allow mutations
+    endpoint: "api/companies" # endpoint for all views of this entity
     listActions: # list of buttons for edit
       - edit # predefined button, redirect to edit form
       - delete # predefined button, delete record
