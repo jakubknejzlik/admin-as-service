@@ -3,7 +3,7 @@ url: '${API_URL}'
 entities:
   posts:
     name: My Post
-    endpoint: "posts"
+    endpoint: "posts?blah=foo"
     identifier: id
     list:
       listActions:
