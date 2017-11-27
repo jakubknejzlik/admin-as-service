@@ -18,6 +18,11 @@ if (CONFIG.oauth && CONFIG.oauth.flow == "resourceOwnerPasswordCredentials") {
       ngAdminJWTAuthConfigurator.setJWTAuthURL(
         CONFIG.oauth.authorizeUrl || `${BASE_URL}/authorize`
       );
+      ngAdminJWTAuthConfigurator.setCustomPayload({
+        grant_type: "password",
+        client_id: CONFIG.oauth.clientId,
+        client_secret: CONFIG.oauth.clientSecret
+      });
       ngAdminJWTAuthConfigurator.setCustomAuthHeader({
         name: "Authorization",
         template: "Bearer {{token}}"

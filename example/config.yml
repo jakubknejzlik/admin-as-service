@@ -1,5 +1,10 @@
 title: admin-as-service example
 url: '${API_URL}'
+# oauth:
+#   flow: resourceOwnerPasswordCredentials
+#   authorizeUrl: /authorize
+#   clientId: thisisclientid
+#   clientSecret: 123456
 entities:
   posts:
     name: My Post
