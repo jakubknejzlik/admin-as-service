@@ -5,6 +5,7 @@ url: '${API_URL}'
 #   authorizeUrl: /authorize
 #   clientId: thisisclientid
 #   clientSecret: 123456
+#   scope: email
 entities:
   posts:
     name: My Post

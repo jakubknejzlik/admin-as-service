@@ -21,7 +21,8 @@ if (CONFIG.oauth && CONFIG.oauth.flow == "resourceOwnerPasswordCredentials") {
       ngAdminJWTAuthConfigurator.setCustomPayload({
         grant_type: "password",
         client_id: CONFIG.oauth.clientId,
-        client_secret: CONFIG.oauth.clientSecret
+        client_secret: CONFIG.oauth.clientSecret,
+        scope: CONFIG.oauth.scope
       });
       ngAdminJWTAuthConfigurator.setCustomAuthHeader({
         name: "Authorization",
