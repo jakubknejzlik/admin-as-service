@@ -21,7 +21,7 @@ const interpolateEnvVars = string => {
     let value = process.env[key];
     string = string.replace(new RegExp(`\\\${${key}}`, "gi"), value);
   }
-  return string;
+  return string.replace(new RegExp(`\\\${[^\\}]*}`, "gi"), "");
 };
 
 const getConfig = () => {
