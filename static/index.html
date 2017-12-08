@@ -3,23 +3,15 @@
 
 <head>
     <title></title>
-    <link rel="stylesheet" href="node_modules/ng-admin/build/ng-admin.min.css">
-    <link rel="stylesheet" href="static/app.css">
-    <script src="node_modules/angular/angular.min.js"></script>
-    <script src="node_modules/moment/min/moment.min.js"></script>
-    <script src="node_modules/numeral/min/numeral.min.js"></script>
-    <script src="node_modules/ng-admin/build/ng-admin.min.js"></script>
-    <script src="static/js/ng-admin.jwt-auth.min.js"></script>
-    <script src="static/js/inflection.min.js"></script>
     <script src="config.js"></script>
-    <script src="static/app.admin.js"></script>
-    <script src="static/app.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 
-<body ng-app="myApp" ng-controller="FullScreenCtrl" ng-class="{fullscreen:isFullscreen()}">
-    <div ui-view></div>
-    <div ui-view="ng-admin"></div>
+<body>
+    <pre id="config"></pre>
 </body>
+
+<script>
+    document.getElementById('config').innerHTML = JSON.stringify(window.CONFIG, null, "\t")
+</script>
 
 </html>
