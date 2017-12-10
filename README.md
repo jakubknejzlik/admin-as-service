@@ -122,7 +122,7 @@ For every page you can configure buttons displayed in header.
         - title: test
           icon: new-window
           action: redirect
-          url: 'https://www.google.cz/?ei={{entry.values.id}}' # you can extract data from entity
+          url: 'https://www.google.cz/?ei={{entry.values.id}}&token={{access_token}}' # you can extract data from entity
           target: blank
         - delete
 ```

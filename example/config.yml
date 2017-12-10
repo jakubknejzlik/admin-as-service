@@ -2,8 +2,8 @@ title: admin-as-service example
 url: '${API_URL}'
 # oauth:
 #   flow: resourceOwnerPasswordCredentials
-#   authorizeUrl: /authorize
-#   clientId: thisisclientid
+#   authorizeUrl: .../auth/token
+#   clientId: default_client
 #   clientSecret: 123456
 #   scope: email
 entities:
@@ -16,7 +16,7 @@ entities:
         - title: test
           icon: new-window
           action: redirect
-          url: 'https://www.google.cz/?ei={{entry.values.id}}'
+          url: 'https://www.google.cz/?ei={{entry.values.id}}&access_token={{access_token}}'
           target: blank
         - edit
         - delete

@@ -134,6 +134,10 @@ function _getActions(entity, type, subType, size, defaultValue) {
     var button = "<ma-" + action.action + "-button ";
     button += 'entry="entry" size="' + size + '" ';
     for (var key in action) {
+      action[key] = action[key].replace(
+        /{{access_token}}/g,
+        localStorage.userToken
+      );
       button +=
         inflection.dasherize(inflection.dasherize(key)) +
         '="' +
