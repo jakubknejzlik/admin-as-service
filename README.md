@@ -4,7 +4,8 @@ Generated administration for RESTful api.
 
 # Configuration (config.yml)
 
-You define list of entities that should be displayed. These are mapped to api endpoints.
+You define list of entities that should be displayed. These are mapped to api
+endpoints.
 
 ```
 title: admin-as-service example
@@ -25,7 +26,7 @@ entities:
         url: 'https://www.google.cz/?ei={{entry.values.id}}'
         target: blank
     actions: # actions visible in page header (in list, edit, create screens)
-      - create 
+      - create
       - export
       - filter
     name: Company # entity name displayed in menu item/titles
@@ -54,10 +55,10 @@ Each field is described by object with following structure:
 ```
 ...
   fields:
-    attribute: <columnName>
-    type: string # type of field (string, text, date, select, reference)
-    label: <label> # human friendly name of field (default: attribute value)
-    format: $0,0.00 # formatted number for numeric fields
+    - attribute: <columnName>
+      type: string # type of field (string, text, date, select, reference)
+      label: <label> # human friendly name of field (default: attribute value)
+      format: $0,0.00 # formatted number for numeric fields
 ```
 
 ### Choices field (enum/Select)
@@ -65,11 +66,11 @@ Each field is described by object with following structure:
 ```
 ... deprecated, use choice/choices
   fields:
-    attribute: state
-    type: choice # choice/choices, select is deprecated
-    options:
-      - { value: US, label: USA }
-      - { value: FR, label: France }
+    - attribute: state
+      type: choice # choice/choices, select is deprecated
+      options:
+        - { value: US, label: USA }
+        - { value: FR, label: France }
 ```
 
 ### Reference field
@@ -77,11 +78,11 @@ Each field is described by object with following structure:
 ```
 ...
   fields:
-    attribute: user_id
-    type: reference
-    toMany: false
-    entity: <entity key> # eg. companies
-    targetField: name # field to be displayed in displayed reference (companies.name)
+    - attribute: user_id
+      type: reference
+      toMany: false
+      entity: <entity key> # eg. companies
+      targetField: name # field to be displayed in displayed reference (companies.name)
 ```
 
 ## Filters configuration
@@ -123,7 +124,8 @@ For every page you can configure buttons displayed in header.
 
 ## List actions configuration
 
-The same way you specify page action, you can also specify list actions (buttons in table).
+The same way you specify page action, you can also specify list actions (buttons
+in table).
 
 ```
 ...
@@ -147,8 +149,8 @@ oauth:
   authorizeUrl: https://api.example.com/authorize
 ```
 
-
 ## Fullscreen mode
 
-You can also use application in fullscreen mode (only content is display, navigation bar and side menu is hidden).
-Application switch to this mode when `fullscreen=true` substring is detected in URL.
+You can also use application in fullscreen mode (only content is display,
+navigation bar and side menu is hidden). Application switch to this mode when
+`fullscreen=true` substring is detected in URL.
