@@ -25,7 +25,7 @@ entities:
         url: 'https://www.google.cz/?ei={{entry.values.id}}'
         target: blank
     actions: # actions visible in page header (in list, edit, create screens)
-      - create 
+      - create
       - export
       - filter
     name: Company # entity name displayed in menu item/titles
@@ -58,6 +58,7 @@ Each field is described by object with following structure:
     type: string # type of field (string, text, date, select, reference)
     label: <label> # human friendly name of field (default: attribute value)
     format: $0,0.00 # formatted number for numeric fields
+    readonly: false
 ```
 
 ### Choices field (enum/Select)
@@ -146,7 +147,6 @@ oauth:
   flow: resourceOwnerPasswordCredentials
   authorizeUrl: https://api.example.com/authorize
 ```
-
 
 ## Fullscreen mode
 
