@@ -186,6 +186,7 @@ function getField(nga, field, entities) {
 
   if (field.pinned) result.pinned(field.pinned);
   if (field.attributes) result.attributes(field.attributes);
+  if (field.validation) result.attributes(field.validation);
   if (field.readonly) result.editable(false);
 
   return result;

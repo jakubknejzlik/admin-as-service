@@ -59,6 +59,11 @@ Each field is described by object with following structure:
     label: <label> # human friendly name of field (default: attribute value)
     format: $0,0.00 # formatted number for numeric fields
     readonly: false
+    validation:
+      required: false
+      minlength: 0
+      maxlength: 250
+      pattern: [a-z]+
 ```
 
 ### Choices field (enum/Select)
