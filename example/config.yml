@@ -48,6 +48,11 @@ entities:
       title: My custom posts edit title
     fields:
       - attribute: title
+        validation:
+          required: true
+          minlength: 3
+          maxlength: 10
+          pattern: '[a-z]+'
       - attribute: state
         type: choice
         options:

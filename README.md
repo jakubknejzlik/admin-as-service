@@ -63,7 +63,7 @@ Each field is described by object with following structure:
       required: false
       minlength: 0
       maxlength: 250
-      pattern: [a-z]+
+      pattern: '[a-z]+'
 ```
 
 ### Choices field (enum/Select)
