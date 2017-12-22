@@ -70,5 +70,9 @@ app.use("/", express.static(__dirname));
 
 const port = process.env.PORT || 80;
 app.listen(port, err => {
-  console.log(`listening on ${port}, error: ${err}`);
+  if (err) {
+    console.log(`cannot start listening on ${port}, error: ${err}`);
+  } else {
+    console.log(`listening on ${port}`);
+  }
 });
