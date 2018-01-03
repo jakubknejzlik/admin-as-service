@@ -194,7 +194,7 @@ const getValidationForField = field => (value, allValues) => {
         schema = Joi.number();
         break;
       case "choice":
-        schema = Joi.alternatives.try(Joi.string(), Joi.number());
+        schema = Joi.alternatives().try(Joi.string(), Joi.number());
         break;
       case "choices":
         schema = Joi.array();

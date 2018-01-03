@@ -79,6 +79,14 @@ entities:
                   label: USA
                 - value: FR
                   label: France
+            - attribute: state
+              type: choice
+              required: true
+              options:
+                - value: US
+                  label: USA
+                - value: FR
+                  label: France
     fields:
       - attribute: title
         label: Post title

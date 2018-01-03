@@ -54774,7 +54774,7 @@ var getValidationForField = function getValidationForField(field) {
           schema = _joi2.default.number();
           break;
         case "choice":
-          schema = _joi2.default.alternatives.try(_joi2.default.string(), _joi2.default.number());
+          schema = _joi2.default.alternatives().try(_joi2.default.string(), _joi2.default.number());
           break;
         case "choices":
           schema = _joi2.default.array();
