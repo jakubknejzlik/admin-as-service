@@ -74,9 +74,9 @@ const indexFile = fs.readFileSync("./static/index.html").toString();
 app.get("*", (req, res, next) => {
   getConfiguration()
     .then(config => {
-      res
-        .type("html")
-        .send(indexFile.replace("${BASE_PATH}", config.basePath || "/"));
+      let content = indexFile.replace("${BASE_PATH}", config.basePath || "/");
+      content = content.replace("${TITLE}", config.title);
+      res.type("html").send(content);
     })
     .catch(next);
 });

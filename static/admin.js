@@ -53612,7 +53612,7 @@ var _require3 = require("./connectors"),
 
 var OPTIONS = {
   debug: false,
-  basePath: "/",
+  basePath: _config2.default.basePath,
   baseURL: _config2.default.url
 };
 

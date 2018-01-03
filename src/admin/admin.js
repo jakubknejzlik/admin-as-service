@@ -13,7 +13,7 @@ var { createConnectorFactory } = require("./connectors");
 
 const OPTIONS = {
   debug: false,
-  basePath: "/",
+  basePath: config.basePath,
   baseURL: config.url
 };
 
