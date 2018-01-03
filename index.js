@@ -68,7 +68,7 @@ app.get("/config.js", (req, res, next) => {
     .catch(next);
 });
 
-app.use("/", express.static(path.join(__dirname, "static")));
+app.use("/static", express.static(path.join(__dirname, "static")));
 
 const indexFile = fs.readFileSync("./static/index.html").toString();
 app.get("*", (req, res, next) => {
