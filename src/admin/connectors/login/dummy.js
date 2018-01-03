@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
 
 import {
   createFrontendConnector,
