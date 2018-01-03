@@ -1,17 +1,19 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
-    <title></title>
-    <script src="config.js"></script>
+    <meta charset="UTF-8" />
+    <base href="/" target="_blank">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
+    <title>CRUDL Express Example (GraphQL-API)</title>
+    <link href="http://cdn.crudl.io/static/releases/0.3.0/crudl-ui/css/crudl-ui.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-    <pre id="config"></pre>
+    <div id="crudl-root"></div>
+    <script src="http://cdn.crudl.io/static/releases/0.3.0/crudl.js"></script>
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
 </body>
-
-<script>
-    document.getElementById('config').innerHTML = JSON.stringify(window.CONFIG, null, "\t")
-</script>
 
 </html>

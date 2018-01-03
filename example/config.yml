@@ -1,15 +1,17 @@
 title: admin-as-service example
 url: '${API_URL}'
-# oauth:
-#   flow: resourceOwnerPasswordCredentials
-#   authorizeUrl: /authorize
-#   clientId: thisisclientid
-#   clientSecret: 123456
-#   scope: email
+apiType: json-server
+auth:
+  grantType: dummy
+  authorizeUrl: https://auth.example.com/oauth/token
+  clientId: client_id
+  clientSecret: client_secret
+  scope: accounts
 entities:
   posts:
     name: My Post
-    endpoint: "posts?blah=foo"
+    # endpoint: "posts?blah=foo"
+    endpoint: "posts"
     identifier: id
     list:
       listActions:
@@ -26,17 +28,28 @@ entities:
         - filter
       title: My custom posts title
       filters:
-        q:
-          label: Search
-          pinned: true
-          attributes:
-            placeholder: search text
-            searchColumns: title
-        'where[user_id]':
-          label: User
-          type: reference
-          entity: users
-          targetField: firstname
+        fields:
+          - attribute: q
+            label: Search
+            pinned: true
+            attributes:
+              placeholder: search text
+              searchColumns: title
+          - attribute: user_id
+            label: User
+            type: reference
+            entity: users
+            template: "{{firstname}} {{lastname}}"
+          - attribute: active
+            label: Active
+            type: boolean
+          - attribute: states
+            type: choices
+            options:
+              - value: US
+                label: USA
+              - value: FR
+                label: France
     create:
       actions:
         - list
@@ -46,19 +59,45 @@ entities:
         - delete
         - list
       title: My custom posts edit title
+      fieldsets:
+        - title: Basic data
+          description: Description of section
+          hidden: false
+          expanded: true
+          fields:
+            - attribute: title
+              label: Post title
+            - attribute: active
+              label: Active
+              type: boolean
+            - attribute: states
+              type: choices
+              required: true
+              options:
+                - value: US
+                  label: USA
+                - value: FR
+                  label: France
     fields:
       - attribute: title
-      - attribute: state
-        type: choice
+        label: Post title
+      - attribute: active
+        label: Active
+        type: boolean
+      - attribute: states
+        type: choices
+        required: true
         options:
           - value: US
             label: USA
           - value: FR
             label: France
       - attribute: user_id
+        label: User
         type: reference
         toMany: false
         entity: users
+        template: "{{firstname}} {{lastname}}"
         targetField: firstname
   users:
     name: User
@@ -68,6 +107,8 @@ entities:
       - attribute: firstname
       - attribute: lastname
       - attribute: email
+        type: email
+        required: true
       - attribute: salary
         type: float
     list:

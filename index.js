@@ -12,7 +12,7 @@ const app = express();
 app.use(gracefulExit.middleware(app));
 
 app.get("/", (req, res, next) => {
-  req.url = "static/index.html";
+  req.url = "index.html";
   next();
 });
 
@@ -66,7 +66,11 @@ if (process.env.NODE_ENV == "production") {
   });
 }
 
-app.use("/", express.static(__dirname));
+app.use("/", express.static(path.join(__dirname, "static")));
+
+app.get("*", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "static/index.html"));
+});
 
 const port = process.env.PORT || 80;
 app.listen(port, err => {

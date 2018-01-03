@@ -2,23 +2,63 @@
   "name": "adminr",
   "version": "0.0.1",
   "license": "MIT",
+  "browserify": {
+    "presets": [
+      "es2015",
+      "react"
+    ],
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015",
+            "react"
+          ],
+          "plugins": [
+            "syntax-class-properties",
+            "transform-class-properties",
+            "transform-object-rest-spread"
+          ]
+        }
+      ]
+    ]
+  },
   "dependencies": {
-    "angular": "^1.6.6",
-    "express": "^4.15.3",
+    "@crudlio/crudl-connectors-base": "^0.1.2",
+    "axios": "^0.17.1",
+    "content-range": "^1.1.0",
+    "express": "^4.16.2",
     "express-graceful-exit": "^0.4.0",
+    "handlebars": "^4.0.11",
+    "inflection": "^1.12.0",
+    "joi": "^13.0.2",
     "js-yaml": "^3.8.4",
+    "jsonwebtoken": "^8.1.0",
+    "lodash": "^4.17.4",
     "moment": "^2.18.1",
-    "ng-admin": "^1.0.6",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "pluralize": "^5.0.0",
+    "react": "^15.1.0",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-plugin-syntax-class-properties": "^6.8.0",
+    "babel-plugin-transform-class-properties": "^6.10.2",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.5.0",
+    "babelify": "^7.3.0",
+    "json-server": "^0.12.0",
+    "parallelshell": "^3.0.2",
+    "watchify": "^3.7.0"
   },
   "scripts": {
     "start": "node index.js",
     "example": "parallelshell \"npm run example-server\" \"npm run example-admin\"",
     "example-server": "cp example/json-server.json db.json; json-server --watch db.json",
-    "example-admin": "API_URL=http://localhost:3000 PORT=8080 CONFIG_FILE=example/config.yml node index.js"
-  },
-  "devDependencies": {
-    "json-server": "^0.12.0",
-    "parallelshell": "^3.0.2"
+    "example-admin": "API_URL=http://localhost:3000 PORT=8080 CONFIG_FILE=example/config.yml node index.js",
+    "browserify": "mkdir -p ./static && browserify ./src/ --extension=.jsx > ./static/admin.js",
+    "watchify": "mkdir -p ./static && watchify ./src/ --extension=.jsx -o ./static/admin.js -v"
   }
 }
