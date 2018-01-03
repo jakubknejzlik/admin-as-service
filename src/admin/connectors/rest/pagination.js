@@ -1,7 +1,7 @@
 import contentRange from "content-range";
 
-function getInfo(data, headers) {
-  let range = headers["content-range"];
+function getInfo(req, res) {
+  let range = res.headers["content-range"];
 
   if (!range) {
     return null;
@@ -14,12 +14,12 @@ function getInfo(data, headers) {
   // total number of filtered results
   let filteredTotal = resultsTotal;
   // current page
-  let currentPage = 1; //Math.ceil(parsedRange.length);
+  let currentPage = req.page; //Math.ceil(parsedRange.length);
   // total pages
   let pagesTotal = Math.ceil(resultsTotal / 30);
 
   // the page size
-  let pageSize = data.length;
+  let pageSize = res.data.length;
 
   // Compute all page cursors
   let allPages = [];
@@ -40,7 +40,7 @@ export default function numberedPagination(next) {
   return {
     read: req =>
       next.read(req).then(res => {
-        const paginationDescriptor = getInfo(res.data, res.headers);
+        const paginationDescriptor = getInfo(req, res);
         res.data.pagination = paginationDescriptor;
         return res;
       })

@@ -54240,8 +54240,8 @@ var _contentRange2 = _interopRequireDefault(_contentRange);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function getInfo(data, headers) {
-  var range = headers["content-range"];
+function getInfo(req, res) {
+  var range = res.headers["content-range"];
 
   if (!range) {
     return null;
@@ -54254,12 +54254,12 @@ function getInfo(data, headers) {
   // total number of filtered results
   var filteredTotal = resultsTotal;
   // current page
-  var currentPage = 1; //Math.ceil(parsedRange.length);
+  var currentPage = req.page; //Math.ceil(parsedRange.length);
   // total pages
   var pagesTotal = Math.ceil(resultsTotal / 30);
 
   // the page size
-  var pageSize = data.length;
+  var pageSize = res.data.length;
 
   // Compute all page cursors
   var allPages = [];
@@ -54280,7 +54280,7 @@ function numberedPagination(next) {
   return {
     read: function read(req) {
       return next.read(req).then(function (res) {
-        var paginationDescriptor = getInfo(res.data, res.headers);
+        var paginationDescriptor = getInfo(req, res);
         res.data.pagination = paginationDescriptor;
         return res;
       });
