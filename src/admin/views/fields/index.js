@@ -9,7 +9,7 @@ import { renderField } from "./render";
 export const getListField = (field, connectorFactory) => {
   let render = renderField(field, connectorFactory);
   let sortable = typeof render === "string";
-  let main = sortable;
+  let main = field.main;
 
   return {
     name: field.attribute,

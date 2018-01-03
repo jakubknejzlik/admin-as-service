@@ -8,7 +8,7 @@ export const renderField = (field, connectorFactory) => {
   }
 
   if (field.type === "reference") {
-    result = value => "reference";
+    result = value => `reference ${value}`;
   }
 
   if (["float", "int"].indexOf(field.type) !== -1) {

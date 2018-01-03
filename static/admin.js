@@ -54600,7 +54600,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var getListField = exports.getListField = function getListField(field, connectorFactory) {
   var render = (0, _render.renderField)(field, connectorFactory);
   var sortable = typeof render === "string";
-  var main = sortable;
+  var main = field.main;
 
   return {
     name: field.attribute,
@@ -54819,7 +54819,7 @@ var renderField = exports.renderField = function renderField(field, connectorFac
 
   if (field.type === "reference") {
     result = function result(value) {
-      return "reference";
+      return "reference " + value;
     };
   }
 

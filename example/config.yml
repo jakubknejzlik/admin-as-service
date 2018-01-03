@@ -90,6 +90,7 @@ entities:
     fields:
       - attribute: title
         label: Post title
+        main: true
       - attribute: active
         label: Active
         type: boolean
