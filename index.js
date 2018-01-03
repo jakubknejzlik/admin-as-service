@@ -43,7 +43,11 @@ const getConfig = () => {
   return content;
 };
 
-if (process.env.NODE_ENV == "production") {
+const getConfiguration = async () => {
+  if (process.env.NODE_ENV !== "production") {
+    return yaml.safeLoad(getConfig());
+  }
+
   let configuration = null;
 
   try {
@@ -51,25 +55,30 @@ if (process.env.NODE_ENV == "production") {
   } catch (err) {
     throw new Error("could not serve config: " + err.message);
   }
+  return configuration;
+};
 
-  app.get("/config.js", (req, res, next) => {
-    res
-      .type("application/javascript")
-      .send(`window.CONFIG = ${JSON.stringify(configuration)}`);
-  });
-} else {
-  app.get("/config.js", (req, res, next) => {
-    let configuration = yaml.safeLoad(getConfig());
-    res
-      .type("application/javascript")
-      .send(`window.CONFIG = ${JSON.stringify(configuration)}`);
-  });
-}
+app.get("/config.js", (req, res, next) => {
+  getConfiguration()
+    .then(configuration => {
+      res
+        .type("application/javascript")
+        .send(`window.CONFIG = ${JSON.stringify(configuration)}`);
+    })
+    .catch(next);
+});
 
 app.use("/", express.static(path.join(__dirname, "static")));
 
+const indexFile = fs.readFileSync("./static/index.html").toString();
 app.get("*", (req, res, next) => {
-  res.sendFile(path.join(__dirname, "static/index.html"));
+  getConfiguration()
+    .then(config => {
+      res
+        .type("html")
+        .send(indexFile.replace("${BASE_PATH}", config.basePath || "/"));
+    })
+    .catch(next);
 });
 
 const port = process.env.PORT || 80;

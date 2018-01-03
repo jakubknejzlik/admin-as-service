@@ -1,6 +1,7 @@
 title: admin-as-service example
 url: '${API_URL}'
 apiType: json-server
+basePath: /
 auth:
   grantType: dummy
   authorizeUrl: https://auth.example.com/oauth/token
