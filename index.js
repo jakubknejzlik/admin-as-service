@@ -83,5 +83,9 @@ app.get("*", (req, res, next) => {
 
 const port = process.env.PORT || 80;
 app.listen(port, err => {
-  console.log(`listening on ${port}, error: ${err}`);
+  if (err) {
+    console.log(`failed to start listening on ${port}, error: ${err}`);
+  } else {
+    console.log(`listening on ${port}`);
+  }
 });
