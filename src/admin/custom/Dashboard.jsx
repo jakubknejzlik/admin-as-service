@@ -1,4 +1,5 @@
 import React from "react";
+import config from "../config";
 
 class CustomDashboard extends React.Component {
   render() {
@@ -6,7 +7,10 @@ class CustomDashboard extends React.Component {
       <div className="mgs-container">
         <div className="mgs-row">
           <div className="box">
-            <h3>Welcome in administration</h3>
+            <h3>
+              {(config.messages && config.messages.dashboard) ||
+                `Welcome in ${config.title}`}
+            </h3>
             {/* <p>
                             This is a <a href="http://crudl.io/" target="_blank">crudl</a> example with <a href="https://nodejs.org" target="_blank">Node.js</a>, <a href="http://expressjs.com/" target="_blank">Express</a> (REST and GraphQL) and <a href="https://www.mongodb.com/" target="_blank">MongoDB</a>.
                         </p>
