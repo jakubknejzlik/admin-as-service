@@ -54717,6 +54717,7 @@ var getReferenceField = function getReferenceField(field, connectorFactory) {
   return {
     getValue: (0, _utils.select)(field.attribute),
     field: field.toMany ? "AutocompleteMultiple" : "Autocomplete",
+    showAll: true,
     actions: {
       search: function search(req) {
         req = req.filter("q", req.data.query);

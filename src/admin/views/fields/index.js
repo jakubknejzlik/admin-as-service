@@ -128,6 +128,7 @@ const getReferenceField = (field, connectorFactory) => {
   return {
     getValue: select(field.attribute),
     field: field.toMany ? "AutocompleteMultiple" : "Autocomplete",
+    showAll: true,
     actions: {
       search: req => {
         req = req.filter("q", req.data.query);
