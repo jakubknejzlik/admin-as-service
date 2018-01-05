@@ -179,7 +179,8 @@ const getValidationForField = field => (value, allValues) => {
       case "float":
       case "int":
       case "reference":
-        schema = Joi.number();
+        if (field.toMany) schema = Joi.array();
+        else schema = Joi.number().allow("", null);
         break;
       case "choice":
         schema = Joi.alternatives().try(Joi.string(), Joi.number());
@@ -190,7 +191,7 @@ const getValidationForField = field => (value, allValues) => {
       case "email":
       case "url":
       default:
-        schema = Joi.string();
+        schema = Joi.string().allow("", null);
     }
 
     if (field.type === "email") {

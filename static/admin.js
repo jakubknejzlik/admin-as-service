@@ -54859,9 +54859,6 @@ var serialize = function serialize(obj, prefix) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 exports.default = createBuildQuery;
 
 var _url = require("url");
@@ -54885,7 +54882,6 @@ function createBuildQuery(fields) {
 
     if (req.filters.q) {
       query.q = req.filters.q;
-      console.log(typeof fields === "undefined" ? "undefined" : _typeof(fields));
       query.fields = (0, _utils.getSearchFields)(fields);
     }
     for (var key in req.filters) {
@@ -55589,7 +55585,7 @@ var getValidationForField = function getValidationForField(field) {
         case "float":
         case "int":
         case "reference":
-          schema = _joi2.default.number();
+          if (field.toMany) schema = _joi2.default.array();else schema = _joi2.default.number().allow("", null);
           break;
         case "choice":
           schema = _joi2.default.alternatives().try(_joi2.default.string(), _joi2.default.number());
@@ -55600,7 +55596,7 @@ var getValidationForField = function getValidationForField(field) {
         case "email":
         case "url":
         default:
-          schema = _joi2.default.string();
+          schema = _joi2.default.string().allow("", null);
       }
 
       if (field.type === "email") {
