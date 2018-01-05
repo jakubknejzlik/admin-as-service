@@ -8,7 +8,7 @@ function getInfo(req, res) {
   // total number of filtered results
   let filteredTotal = resultsTotal;
   // current page
-  let currentPage = req.page; //Math.ceil(parsedRange.length);
+  let currentPage = (req.page || 1) * 1; //Math.ceil(parsedRange.length);
   // total pages
   let pagesTotal = Math.ceil(resultsTotal / 30);
 

@@ -325,46 +325,52 @@ exports.crudToHttp = _crudToHttp2.default;
 exports.url = _url2.default;
 exports.transformData = _transformData2.default;
 },{"./crudToHttp":5,"./transformData":7,"./url":8}],7:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.default = transformData;
 /**
-* Creates a transformData middleware
-* @methodRegExp Which methods should be transformed e.g. 'create|update'
-* @transform The transform function
-*/
+ * Creates a transformData middleware
+ * @methodRegExp Which methods should be transformed e.g. 'create|update'
+ * @transform The transform function
+ */
 function transformData(methodRegExp) {
-    var transform = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (data) {
-        return data;
-    };
-
-    var re = new RegExp(methodRegExp || '.*');
-
-    // The middleware function
-    return function transformDataMiddleware(next) {
-        // Checks if the call should be transformed. If yes, it applies the transform function
-        function checkAndTransform(method) {
-            return re.test(method) ? function (req) {
-                return next[method](req).then(function (res) {
-                    return Object.assign(res, { data: transform(res.data) });
-                });
-            } : function (req) {
-                return next[method](req);
-            };
-        }
-
-        // The middleware connector:
-        return {
-            create: checkAndTransform('create'),
-            read: checkAndTransform('read'),
-            update: checkAndTransform('update'),
-            delete: checkAndTransform('delete')
+  var transform =
+    arguments.length > 1 && arguments[1] !== undefined
+      ? arguments[1]
+      : function(data) {
+          return data;
         };
+
+  var re = new RegExp(methodRegExp || ".*");
+
+  // The middleware function
+  return function transformDataMiddleware(next) {
+    // Checks if the call should be transformed. If yes, it applies the transform function
+    function checkAndTransform(method) {
+      return re.test(method)
+        ? function(req) {
+            return next[method](req).then(function(res) {
+              return Object.assign(res, { data: transform(res.data) });
+            });
+          }
+        : function(req) {
+            return next[method](req);
+          };
+    }
+
+    // The middleware connector:
+    return {
+      create: checkAndTransform("create"),
+      read: checkAndTransform("read"),
+      update: checkAndTransform("update"),
+      delete: checkAndTransform("delete")
     };
+  };
 }
+
 },{}],8:[function(require,module,exports){
 'use strict';
 
@@ -56622,16 +56628,11 @@ var _utils2 = require("../utils");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createRestConnector(baseURL, urlPath, fields) {
-  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use((0, _middleware.transformData)("read", function (data) {
-    if (!fields) return data;
-    return (0, _utils2.loadDataForFields)(data, fields).catch(function (err) {
-      return console.log("failed to load data for fields:", err);
-    });
-  })).use(_errors2.default);
+  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use(_errors2.default);
 }
 
 var _list = function _list(baseUrl, collection, fields) {
-  return createRestConnector(baseUrl, ":collection/", fields).use(_pagination2.default)(collection);
+  return createRestConnector(baseUrl, ":collection/", fields).use(_pagination2.default).use((0, _utils2.transformReference)(fields))(collection);
 };
 
 exports.list = _list;
@@ -56674,7 +56675,7 @@ function getInfo(req, res) {
   // total number of filtered results
   var filteredTotal = resultsTotal;
   // current page
-  var currentPage = req.page; //Math.ceil(parsedRange.length);
+  var currentPage = (req.page || 1) * 1; //Math.ceil(parsedRange.length);
   // total pages
   var pagesTotal = Math.ceil(resultsTotal / 30);
 
@@ -57009,14 +57010,11 @@ var _utils = require("../utils");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createRestConnector(baseURL, urlPath, fields) {
-  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use((0, _middleware.transformData)("read", function (data) {
-    if (!fields) return data;
-    return (0, _utils.loadDataForFields)(data, fields);
-  })).use(_errors2.default);
+  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use(_errors2.default);
 }
 
 var _list = function _list(baseUrl, collection, fields) {
-  return createRestConnector(baseUrl, ":collection/", fields).use(_pagination2.default)(collection);
+  return createRestConnector(baseUrl, ":collection/", fields).use(_pagination2.default).use((0, _utils.transformReference)(fields))(collection);
 };
 
 exports.list = _list;
@@ -57065,13 +57063,12 @@ function getInfo(req, res) {
   // total number of filtered results
   var filteredTotal = resultsTotal;
   // current page
-  var currentPage = req.page; //Math.ceil(parsedRange.length);
+  var currentPage = (req.page || 1) * 1; //Math.ceil(parsedRange.length);
   // total pages
   var pagesTotal = Math.ceil(resultsTotal / 30);
 
   // the page size
   var pageSize = res.data.length;
-
   // Compute all page cursors
   var allPages = [];
   for (var i = 0; i < pagesTotal; i++) {
@@ -57105,7 +57102,7 @@ function numberedPagination(next) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.loadDataForFields = undefined;
+exports.transformReference = undefined;
 exports.getSearchFields = getSearchFields;
 
 var _config = require("../config");
@@ -57125,13 +57122,31 @@ function getSearchFields(fields) {
 }
 
 // load field with type reference and fill data with results
-var loadDataForFields = exports.loadDataForFields = function loadDataForFields(data, fields) {
+var transformReference = exports.transformReference = function transformReference(fields) {
+  return function (next) {
+    return {
+      read: function read(req) {
+        return next.read(req).then(function (res) {
+          if (!fields) return res;
+          return loadDataForFields(res.data, fields).then(function (data) {
+            res.data = data;
+            return res;
+          });
+        });
+      }
+    };
+  };
+};
+
+var loadDataForFields = function loadDataForFields(data, fields) {
   var referenceFields = fields.filter(function (f) {
     return f.type === "reference";
   });
+  var pagination = data.pagination;
   return Promise.all(referenceFields.map(function (f) {
     return loadDataForField(data, f);
   })).then(function () {
+    data.pagination = pagination;
     return data;
   });
 };

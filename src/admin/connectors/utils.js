@@ -9,10 +9,27 @@ export function getSearchFields(fields) {
 }
 
 // load field with type reference and fill data with results
-export const loadDataForFields = (data, fields) => {
+export const transformReference = fields => next => {
+  return {
+    read: req =>
+      next.read(req).then(res => {
+        if (!fields) return res;
+        return loadDataForFields(res.data, fields).then(data => {
+          res.data = data;
+          return res;
+        });
+      })
+  };
+};
+
+const loadDataForFields = (data, fields) => {
   let referenceFields = fields.filter(f => f.type === "reference");
+  let pagination = data.pagination;
   return Promise.all(referenceFields.map(f => loadDataForField(data, f))).then(
-    () => data
+    () => {
+      data.pagination = pagination;
+      return data;
+    }
   );
 };
 const loadDataForField = (data, field) => {

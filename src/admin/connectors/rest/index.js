@@ -11,26 +11,20 @@ import {
 import errors from "./errors";
 import numberedPagination from "./pagination";
 import buildQuery from "./buildQuery";
-import { loadDataForFields } from "../utils";
+import { transformReference } from "../utils";
 
 function createRestConnector(baseURL, urlPath, fields) {
   return createFrontendConnector(createBackendConnector({ baseURL }))
     .use(buildQuery(fields))
     .use(crudToHttp())
     .use(url(urlPath))
-    .use(
-      transformData("read", data => {
-        if (!fields) return data;
-        return loadDataForFields(data, fields);
-      })
-    )
     .use(errors);
 }
 
 export const list = (baseUrl, collection, fields) =>
-  createRestConnector(baseUrl, ":collection/", fields).use(numberedPagination)(
-    collection
-  );
+  createRestConnector(baseUrl, ":collection/", fields)
+    .use(numberedPagination)
+    .use(transformReference(fields))(collection);
 
 export const detail = (baseUrl, collection, id) => {
   return createRestConnector(baseUrl, ":collection/:id/")(collection, id);
