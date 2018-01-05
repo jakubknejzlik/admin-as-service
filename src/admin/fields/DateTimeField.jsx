@@ -1,6 +1,7 @@
 import React from "react";
 // import DateTime from "react-datetime";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
+// import DateTimePicker from "react-widgets/lib/DateTimePicker";
 
 class DateTimeField extends React.Component {
   static propTypes = {
@@ -10,10 +11,11 @@ class DateTimeField extends React.Component {
 
   render() {
     const { id, input, disabled } = this.props;
-    console.log(input);
+
     return (
+      // <DateTimePicker />
       <div className="field">
-        <DatePicker
+        <input
           id={id}
           type="date"
           autoComplete="off"
