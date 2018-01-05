@@ -133,6 +133,8 @@ entities:
         type: text
       - attribute: birthdate
         type: date
+      - attribute: lastVisit
+        type: datetime
     list:
       fields:
         - attribute: firstname

@@ -7,6 +7,7 @@ import { renderField } from "./render";
 import { getReferenceLabelForField } from "../../utils";
 import DateTimeField from "../../fields/DateTimeField";
 import NumberField from "../../fields/NumberField";
+import moment from "moment";
 
 export const getListField = field => {
   let render = renderField(field);
@@ -62,15 +63,18 @@ export const getField = field => {
       };
       break;
     case "date":
+    case "datetime":
       f = {
         field: DateTimeField,
-        getTime: date => {
-          let T = date.indexOf("T");
-          return date.slice(T + 1, T + 6);
+        type: field.type,
+        normalize: value => {
+          // should display warning when displaying dates in different timezone!
+          if (field.type === "date") return moment(value).format("YYYY-MM-DD");
+          return moment(value).format("YYYY-MM-DDTHH:mm:ss");
         },
-        getDate: date => {
-          let T = date.indexOf("T");
-          return date.slice(0, T);
+        denormalize: value => {
+          let m = moment(value);
+          return m.format();
         }
       };
       break;
@@ -81,7 +85,10 @@ export const getField = field => {
       break;
     default:
       f = {
-        field: inflection.camelize(type)
+        field: inflection.camelize(type),
+        denormalize: value => {
+          return value + "";
+        }
       };
   }
 
@@ -211,7 +218,7 @@ const getValidationForField = field => (value, allValues) => {
         else schema = Joi.number().allow("", null);
         break;
       case "choice":
-        schema = Joi.alternatives().try(Joi.string(), Joi.number());
+        schema = Joi.alternatives().try(Joi.string().allow(null), Joi.number());
         break;
       case "choices":
         schema = Joi.array();
