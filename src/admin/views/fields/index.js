@@ -51,11 +51,17 @@ export const getField = field => {
         link: field.link || false
       };
       break;
+    case "text":
+      f = {
+        field: "Textarea"
+      };
+      break;
     default:
       f = {
         field: inflection.camelize(type)
       };
   }
+  console.log(f);
 
   f = Object.assign({}, f, {
     name: field.attribute,

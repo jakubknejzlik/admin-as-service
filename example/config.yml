@@ -128,10 +128,14 @@ entities:
         required: true
       - attribute: salary
         type: float
+      - attribute: notes
+        type: text
     list:
       fields:
         - attribute: firstname
+          main: true
         - attribute: lastname
+          main: true
         - attribute: salary
           type: float
           format: '$0,0.00'

@@ -55464,11 +55464,17 @@ var getField = exports.getField = function getField(field) {
         link: field.link || false
       };
       break;
+    case "text":
+      f = {
+        field: "Textarea"
+      };
+      break;
     default:
       f = {
         field: _inflection2.default.camelize(type)
       };
   }
+  console.log(f);
 
   f = Object.assign({}, f, {
     name: field.attribute,
