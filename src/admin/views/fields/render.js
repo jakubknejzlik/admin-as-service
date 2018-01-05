@@ -10,6 +10,11 @@ export const renderField = field => {
   if (["float", "int"].indexOf(field.type) !== -1) {
     result = "number";
   }
+
+  if (field.type === "reference" && field.toMany) {
+    result = v => v.join(", ");
+  }
+
   return result;
 };
 

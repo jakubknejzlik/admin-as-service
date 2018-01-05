@@ -130,6 +130,8 @@ entities:
         type: float
       - attribute: notes
         type: text
+      - attribute: birthdate
+        type: date
     list:
       fields:
         - attribute: firstname

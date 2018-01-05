@@ -5,6 +5,7 @@ import config from "../../config";
 import Joi from "joi";
 import { renderField } from "./render";
 import { getReferenceLabelForField } from "../../utils";
+import DateTimeField from "../../fields/DateTimeField";
 
 export const getListField = field => {
   let render = renderField(field);
@@ -51,6 +52,19 @@ export const getField = field => {
         link: field.link || false
       };
       break;
+    case "date":
+      f = {
+        field: DateTimeField,
+        getTime: date => {
+          let T = date.indexOf("T");
+          return date.slice(T + 1, T + 6);
+        },
+        getDate: date => {
+          let T = date.indexOf("T");
+          return date.slice(0, T);
+        }
+      };
+      break;
     case "text":
       f = {
         field: "Textarea"
@@ -61,7 +75,6 @@ export const getField = field => {
         field: inflection.camelize(type)
       };
   }
-  console.log(f);
 
   f = Object.assign({}, f, {
     name: field.attribute,

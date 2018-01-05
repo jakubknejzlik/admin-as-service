@@ -3,12 +3,18 @@
   "version": "0.0.1",
   "license": "MIT",
   "browserify": {
-    "presets": ["es2015", "react"],
+    "presets": [
+      "es2015",
+      "react"
+    ],
     "transform": [
       [
         "babelify",
         {
-          "presets": ["es2015", "react"],
+          "presets": [
+            "es2015",
+            "react"
+          ],
           "plugins": [
             "syntax-class-properties",
             "transform-class-properties",
@@ -34,6 +40,8 @@
     "numeral": "^2.0.6",
     "pluralize": "^5.0.0",
     "react": "^15.1.0",
+    "react-datepicker": "^1.0.4",
+    "react-datetime": "^2.11.1",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
@@ -49,15 +57,10 @@
   },
   "scripts": {
     "start": "node index.js",
-    "example":
-      "parallelshell \"npm run example-server\" \"npm run example-admin\"",
-    "example-server":
-      "cp example/json-server.json db.json; json-server --watch db.json",
-    "example-admin":
-      "API_URL=http://localhost:3000 PORT=8080 CONFIG_FILE=example/config.yml node index.js",
-    "browserify":
-      "mkdir -p ./static && browserify ./src/ --extension=.jsx > ./static/admin.js",
-    "watchify":
-      "mkdir -p ./static && watchify ./src/ --extension=.jsx -o ./static/admin.js -v"
+    "example": "parallelshell \"npm run example-server\" \"npm run example-admin\"",
+    "example-server": "cp example/json-server.json db.json; json-server --watch db.json",
+    "example-admin": "API_URL=http://localhost:3000 PORT=8080 CONFIG_FILE=example/config.yml node index.js",
+    "browserify": "mkdir -p ./static && browserify ./src/ --extension=.jsx > ./static/admin.js",
+    "watchify": "mkdir -p ./static && watchify ./src/ --extension=.jsx -o ./static/admin.js -v"
   }
 }
