@@ -128,6 +128,7 @@ entities:
         required: true
       - attribute: salary
         type: float
+        step: 0.1
       - attribute: notes
         type: text
       - attribute: birthdate

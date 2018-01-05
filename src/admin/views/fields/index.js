@@ -6,6 +6,7 @@ import Joi from "joi";
 import { renderField } from "./render";
 import { getReferenceLabelForField } from "../../utils";
 import DateTimeField from "../../fields/DateTimeField";
+import NumberField from "../../fields/NumberField";
 
 export const getListField = field => {
   let render = renderField(field);
@@ -43,7 +44,15 @@ export const getField = field => {
     case "int":
     case "decimal":
       f = {
-        field: "String"
+        field: NumberField,
+        step: field.step || 1,
+        denormalize: value => {
+          if (field.type === "int") {
+            return parseInt(value);
+          } else {
+            return parseFloat(value);
+          }
+        }
       };
       break;
     case "url":

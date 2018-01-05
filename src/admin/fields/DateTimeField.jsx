@@ -17,7 +17,7 @@ class DateTimeField extends React.Component {
       <div className="field">
         <input
           id={id}
-          type="date"
+          type="datetime-local"
           autoComplete="off"
           readOnly={false}
           {...input}

@@ -51841,7 +51841,7 @@ admin.id = "admin-as-service";
 
 exports.default = admin;
 
-},{"./config":394,"./connectors":395,"./custom/Dashboard":409,"./views/login":416,"./views/views":418,"react":355}],394:[function(require,module,exports){
+},{"./config":394,"./connectors":395,"./custom/Dashboard":409,"./views/login":417,"./views/views":419,"react":355}],394:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52115,7 +52115,7 @@ exports.default = function (baseUrl, urlPath, fields) {
   };
 };
 
-},{"../../config":394,"../../utils":411,"../utils":408,"./buildQuery":396,"./errors":397,"./pagination":399,"@crudlio/crudl-connectors-base":4,"@crudlio/crudl-connectors-base/lib/middleware":6}],399:[function(require,module,exports){
+},{"../../config":394,"../../utils":412,"../utils":408,"./buildQuery":396,"./errors":397,"./pagination":399,"@crudlio/crudl-connectors-base":4,"@crudlio/crudl-connectors-base/lib/middleware":6}],399:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52670,7 +52670,7 @@ var loadDataForField = function loadDataForField(data, field) {
   });
 };
 
-},{"../config":394,"../utils":411}],409:[function(require,module,exports){
+},{"../config":394,"../utils":412}],409:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52784,7 +52784,7 @@ var DateTimeField = function (_React$Component) {
           { className: "field" },
           _react2.default.createElement("input", _extends({
             id: id,
-            type: "date",
+            type: "datetime-local",
             autoComplete: "off",
             readOnly: false
           }, input, {
@@ -52805,6 +52805,69 @@ DateTimeField.propTypes = {
 exports.default = crudl.baseField(DateTimeField);
 
 },{"react":355}],411:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.NumberField = undefined;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var NumberField = exports.NumberField = function (_React$Component) {
+  _inherits(NumberField, _React$Component);
+
+  function NumberField() {
+    _classCallCheck(this, NumberField);
+
+    return _possibleConstructorReturn(this, (NumberField.__proto__ || Object.getPrototypeOf(NumberField)).apply(this, arguments));
+  }
+
+  _createClass(NumberField, [{
+    key: "render",
+    value: function render() {
+      var _props = this.props,
+          id = _props.id,
+          input = _props.input,
+          step = _props.step;
+
+      return _react2.default.createElement(
+        "div",
+        { className: "field" },
+        _react2.default.createElement("input", _extends({
+          type: "number",
+          step: step,
+          id: id,
+          autoComplete: "off"
+        }, input, {
+          "data-field-display-name": id,
+          "data-field-display-values": input.value
+        }))
+      );
+    }
+  }]);
+
+  return NumberField;
+}(_react2.default.Component);
+
+NumberField.propTypes = {};
+exports.default = crudl.baseField(NumberField);
+
+},{"react":355}],412:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52871,7 +52934,7 @@ function select(pathSpec, defaultValue) {
   };
 }
 
-},{"handlebars":186,"lodash/get":309,"lodash/toPath":316}],412:[function(require,module,exports){
+},{"handlebars":186,"lodash/get":309,"lodash/toPath":316}],413:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52887,7 +52950,7 @@ Object.defineProperty(exports, "regex_url", {
   }
 });
 
-},{"./regex_url":413}],413:[function(require,module,exports){
+},{"./regex_url":414}],414:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52927,7 +52990,7 @@ var regex_url = exports.regex_url = new RegExp("^" +
 // resource path
 "(?:/\\S*)?" + "$", "i");
 
-},{}],414:[function(require,module,exports){
+},{}],415:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52956,6 +53019,10 @@ var _render = require("./render");
 var _DateTimeField = require("../../fields/DateTimeField");
 
 var _DateTimeField2 = _interopRequireDefault(_DateTimeField);
+
+var _NumberField = require("../../fields/NumberField");
+
+var _NumberField2 = _interopRequireDefault(_NumberField);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -52995,7 +53062,15 @@ var getField = exports.getField = function getField(field) {
     case "int":
     case "decimal":
       f = {
-        field: "String"
+        field: _NumberField2.default,
+        step: field.step || 1,
+        denormalize: function denormalize(value) {
+          if (field.type === "int") {
+            return parseInt(value);
+          } else {
+            return parseFloat(value);
+          }
+        }
       };
       break;
     case "url":
@@ -53174,7 +53249,7 @@ var getValidationForField = function getValidationForField(field) {
   };
 };
 
-},{"../../config":394,"../../fields/DateTimeField":410,"../../utils":411,"../../validation":412,"./render":415,"inflection":214,"joi":221}],415:[function(require,module,exports){
+},{"../../config":394,"../../fields/DateTimeField":410,"../../fields/NumberField":411,"../../utils":412,"../../validation":413,"./render":416,"inflection":214,"joi":221}],416:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53215,7 +53290,7 @@ var renderChoicesField = exports.renderChoicesField = function renderChoicesFiel
   };
 };
 
-},{}],416:[function(require,module,exports){
+},{}],417:[function(require,module,exports){
 "use strict";
 
 var _connectors = require("../connectors");
@@ -53263,7 +53338,7 @@ module.exports = {
   logout: undefined
 };
 
-},{"../connectors":395}],417:[function(require,module,exports){
+},{"../connectors":395}],418:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53416,7 +53491,7 @@ var getFieldsets = function getFieldsets(entity, type) {
   });
 };
 
-},{"../config":394,"../utils":411,"../validation":412,"./fields":414,"handlebars":186,"inflection":214,"joi":221}],418:[function(require,module,exports){
+},{"../config":394,"../utils":412,"../validation":413,"./fields":415,"handlebars":186,"inflection":214,"joi":221}],419:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53445,7 +53520,7 @@ var createView = function createView(entity) {
   return { listView: listView, changeView: changeView, addView: addView };
 };
 
-},{"./views.detail":417,"./views.list":419}],419:[function(require,module,exports){
+},{"./views.detail":418,"./views.list":420}],420:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53501,7 +53576,7 @@ var getFilters = function getFilters(entity) {
   };
 };
 
-},{"./fields":414,"inflection":214}],420:[function(require,module,exports){
+},{"./fields":415,"inflection":214}],421:[function(require,module,exports){
 "use strict";
 
 var _admin = require("./admin/admin");
@@ -53512,4 +53587,4 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 crudl.render(_admin2.default);
 
-},{"./admin/admin":393}]},{},[420]);
+},{"./admin/admin":393}]},{},[421]);
