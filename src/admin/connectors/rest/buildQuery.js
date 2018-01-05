@@ -14,7 +14,6 @@ export default function createBuildQuery(fields) {
 
     if (req.filters.q) {
       query.q = req.filters.q;
-      console.log(typeof fields);
       query.fields = getSearchFields(fields);
     }
     for (let key in req.filters) {
