@@ -1,8 +1,8 @@
 import inflection from "inflection";
 import { getListField, getField } from "./fields";
 
-export const createListView = (entity, connectorFactory) => {
-  let connector = connectorFactory.connectorForEntity(entity).list();
+export const createListView = entity => {
+  let connector = entity.connector.list();
 
   let title = (entity.list && entity.list.title) || entity.name || entity.path;
 
@@ -16,24 +16,24 @@ export const createListView = (entity, connectorFactory) => {
     }
   };
 
-  listView.fields = getFields(entity, connectorFactory);
-  listView.filters = getFilters(entity, connectorFactory);
+  listView.fields = getFields(entity);
+  listView.filters = getFilters(entity);
 
   return listView;
 };
 
-const getFields = (entity, connectorFactory) => {
+const getFields = entity => {
   let fields = (entity.list && entity.list.fields) || entity.fields;
 
-  return fields.map(getListField, connectorFactory);
+  return fields.map(getListField);
 };
 
-const getFilters = (entity, connectorFactory) => {
+const getFilters = entity => {
   let filters = entity.list && entity.list.filters;
 
   if (!filters) return undefined;
 
-  let fields = filters.fields.map(field => getField(field, connectorFactory));
+  let fields = filters.fields.map(field => getField(field));
   return {
     fields: fields
   };

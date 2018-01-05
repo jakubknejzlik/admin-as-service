@@ -11,12 +11,19 @@ import {
 import errors from "./errors";
 import numberedPagination from "./pagination";
 import buildQuery from "./buildQuery";
+import { loadDataForFields } from "../utils";
 
 function createRestConnector(baseURL, urlPath, fields) {
   return createFrontendConnector(createBackendConnector({ baseURL }))
     .use(buildQuery(fields))
     .use(crudToHttp())
     .use(url(urlPath))
+    .use(
+      transformData("read", data => {
+        if (!fields) return data;
+        return loadDataForFields(data, fields);
+      })
+    )
     .use(errors);
 }
 

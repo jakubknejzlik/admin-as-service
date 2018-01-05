@@ -7,7 +7,7 @@ for (let key in config.entities) {
   let listFields = (entity.list && entity.list.fields) || entity.fields;
   entity.listFields = [];
   for (let name in listFields) {
-    entity.listFields.push(listFields[name].attribute);
+    entity.listFields.push(listFields[name]);
   }
 }
 

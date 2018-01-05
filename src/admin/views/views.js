@@ -1,19 +1,19 @@
 import { createListView } from "./views.list";
 import { createChangeView, createAddView } from "./views.detail";
 
-export const createViews = (entities, connectorFactory) => {
+export const createViews = entities => {
   let result = {};
   for (let key in entities) {
     let entity = entities[key];
-    result[key] = createView(entity, connectorFactory);
+    result[key] = createView(entity);
   }
   return result;
 };
 
-const createView = (entity, connectorFactory) => {
-  let listView = createListView(entity, connectorFactory);
-  let changeView = createChangeView(entity, connectorFactory);
-  let addView = createAddView(entity, connectorFactory);
+const createView = entity => {
+  let listView = createListView(entity);
+  let changeView = createChangeView(entity);
+  let addView = createAddView(entity);
 
   return { listView, changeView, addView };
 };

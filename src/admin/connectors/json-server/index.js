@@ -7,16 +7,27 @@ import {
   url,
   transformData
 } from "@crudlio/crudl-connectors-base/lib/middleware";
+import config from "../../config";
+import { getReferenceLabelForField } from "../../utils";
 
 import errors from "./errors";
 import numberedPagination from "./pagination";
 import buildQuery from "./buildQuery";
+import { loadDataForFields } from "../utils";
 
 function createRestConnector(baseURL, urlPath, fields) {
   return createFrontendConnector(createBackendConnector({ baseURL }))
     .use(buildQuery(fields))
     .use(crudToHttp())
     .use(url(urlPath))
+    .use(
+      transformData("read", data => {
+        if (!fields) return data;
+        return loadDataForFields(data, fields).catch(err =>
+          console.log("failed to load data for fields:", err)
+        );
+      })
+    )
     .use(errors);
 }
 

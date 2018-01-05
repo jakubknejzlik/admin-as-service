@@ -17,12 +17,17 @@ const OPTIONS = {
   baseURL: config.url
 };
 
-const connector = createConnectorFactory(config.apiType, config.url);
+const connectorFactory = createConnectorFactory(config.apiType, config.url);
+
+for (let entityName in config.entities) {
+  let entity = config.entities[entityName];
+  entity.connector = connectorFactory.connectorForEntity(entity);
+}
 
 var admin = {};
 admin.title = config.title;
 admin.options = OPTIONS;
-admin.views = createViews(config.entities, connector);
+admin.views = createViews(config.entities);
 admin.auth = { login: login(config.auth) };
 admin.custom = { dashboard: CustomDashboard };
 admin.id = "admin-as-service";

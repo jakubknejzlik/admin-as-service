@@ -2,12 +2,12 @@ import inflection from "inflection";
 import { select } from "../../utils";
 import { regex_url } from "../../validation";
 import config from "../../config";
-import Handlebars from "handlebars";
 import Joi from "joi";
 import { renderField } from "./render";
+import { getReferenceLabelForField } from "../../utils";
 
-export const getListField = (field, connectorFactory) => {
-  let render = renderField(field, connectorFactory);
+export const getListField = field => {
+  let render = renderField(field);
   let sortable = typeof render === "string";
   let main = field.main;
 
@@ -20,7 +20,7 @@ export const getListField = (field, connectorFactory) => {
   };
 };
 
-export const getField = (field, connectorFactory) => {
+export const getField = field => {
   let type = field.type || "string";
   let f = null;
   switch (type) {
@@ -36,7 +36,7 @@ export const getField = (field, connectorFactory) => {
       f = getChoicesField(field);
       break;
     case "reference":
-      f = getReferenceField(field, connectorFactory);
+      f = getReferenceField(field);
       break;
     case "float":
     case "int":
@@ -121,10 +121,9 @@ const getChoicesField = field => {
   };
 };
 
-const getReferenceField = (field, connectorFactory) => {
-  let connector = connectorFactory.connectorForEntity(
-    config.getEntity(field.entity)
-  );
+const getReferenceField = field => {
+  let entity = config.getEntity(field.entity);
+  let connector = entity.connector;
   return {
     getValue: select(field.attribute),
     field: field.toMany ? "AutocompleteMultiple" : "Autocomplete",
@@ -136,13 +135,10 @@ const getReferenceField = (field, connectorFactory) => {
           .list()
           .read(req)
           .then(result =>
-            Promise.all(
-              result.map(item => {
-                return getReferenceLabelForField(item, field).then(label => {
-                  return { value: item.id, label: label };
-                });
-              })
-            )
+            result.map(item => {
+              let label = getReferenceLabelForField(item, field);
+              return { value: item.id, label: label };
+            })
           );
       },
       select: req => {
@@ -152,9 +148,8 @@ const getReferenceField = (field, connectorFactory) => {
               .detail(item.value)
               .read(crudl.req())
               .then(item => {
-                return getReferenceLabelForField(item, field).then(label => {
-                  return { value: item.id, label: label };
-                });
+                let label = getReferenceLabelForField(item, field);
+                return { value: item.id, label: label };
               });
           })
         );
@@ -168,14 +163,6 @@ const getReferenceField = (field, connectorFactory) => {
       // )
     }
   };
-};
-
-const getReferenceLabelForField = async (ref, field) => {
-  if (field.template) {
-    let temp = Handlebars.compile(field.template);
-    return temp(ref);
-  }
-  return ref[field.targetField];
 };
 
 const getValidationForField = field => (value, allValues) => {

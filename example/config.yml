@@ -88,7 +88,12 @@ entities:
                 - value: US
                   label: USA
                 - value: FR
-                  label: France
+                  label: France 
+            - attribute: user_id
+              label: User
+              type: reference
+              entity: users
+              template: "{{firstname}} {{lastname}}"
     fields:
       - attribute: title
         label: Post title

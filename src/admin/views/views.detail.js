@@ -6,8 +6,8 @@ import Handlebars from "handlebars";
 import Joi from "joi";
 import { getField } from "./fields";
 
-export const createAddView = (entity, connectorFactory) => {
-  let connector = connectorFactory.connectorForEntity(entity).list();
+export const createAddView = entity => {
+  let connector = entity.connector.list();
   let title = entity.create && entity.create.title;
   if (!title) {
     let name = entity.name || entity.path;
@@ -24,13 +24,13 @@ export const createAddView = (entity, connectorFactory) => {
     }
   };
 
-  createView.fieldsets = getFieldsets(entity, "create", connectorFactory);
+  createView.fieldsets = getFieldsets(entity, "create");
 
   return createView;
 };
 
-export const createChangeView = (entity, connectorFactory) => {
-  let connector = connectorFactory.connectorForEntity(entity);
+export const createChangeView = entity => {
+  let connector = entity.connector;
   let title = entity.edit && entity.edit.title;
   if (!title) {
     let name = entity.name || entity.path;
@@ -60,7 +60,7 @@ export const createChangeView = (entity, connectorFactory) => {
     }
   };
 
-  changeView.fieldsets = getFieldsets(entity, "edit", connectorFactory);
+  changeView.fieldsets = getFieldsets(entity, "edit");
 
   // changeView.tabs = [
   //   {
@@ -112,7 +112,7 @@ export const createChangeView = (entity, connectorFactory) => {
   return changeView;
 };
 
-const getFieldsets = (entity, type, connectorFactory) => {
+const getFieldsets = (entity, type) => {
   let fieldsets = (entity[type] && entity[type].fieldsets) || entity.fieldsets;
   if (!fieldsets) {
     let fields = (entity[type] && entity[type].fields) || entity.fields;
@@ -120,7 +120,7 @@ const getFieldsets = (entity, type, connectorFactory) => {
   }
   return fieldsets.map(fieldset =>
     Object.assign({}, fieldset, {
-      fields: fieldset.fields.map(field => getField(field, connectorFactory))
+      fields: fieldset.fields.map(field => getField(field))
     })
   );
 };

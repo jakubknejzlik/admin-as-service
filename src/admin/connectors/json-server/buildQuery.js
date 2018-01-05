@@ -1,4 +1,5 @@
 import url from "url";
+import { getSearchFields } from "../utils";
 
 export default function createBuildQuery(fields) {
   // Builds a new url using the request's url, filters, pagination, and sorting
@@ -13,7 +14,7 @@ export default function createBuildQuery(fields) {
 
     if (req.filters.q) {
       query.q = req.filters.q;
-      query.fields = fields.join(",");
+      query.fields = getSearchFields(fields);
     }
     for (let key in req.filters) {
       if (key !== "q") {

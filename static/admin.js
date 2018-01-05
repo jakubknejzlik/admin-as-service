@@ -54353,12 +54353,17 @@ var OPTIONS = {
   baseURL: _config2.default.url
 };
 
-var connector = createConnectorFactory(_config2.default.apiType, _config2.default.url);
+var connectorFactory = createConnectorFactory(_config2.default.apiType, _config2.default.url);
+
+for (var entityName in _config2.default.entities) {
+  var entity = _config2.default.entities[entityName];
+  entity.connector = connectorFactory.connectorForEntity(entity);
+}
 
 var admin = {};
 admin.title = _config2.default.title;
 admin.options = OPTIONS;
-admin.views = createViews(_config2.default.entities, connector);
+admin.views = createViews(_config2.default.entities);
 admin.auth = { login: login(_config2.default.auth) };
 admin.custom = { dashboard: _Dashboard2.default };
 admin.id = "admin-as-service";
@@ -54372,7 +54377,7 @@ admin.id = "admin-as-service";
 
 exports.default = admin;
 
-},{"./config":419,"./connectors":420,"./custom/Dashboard":433,"./views/login":439,"./views/views":441,"react":380}],419:[function(require,module,exports){
+},{"./config":419,"./connectors":420,"./custom/Dashboard":434,"./views/login":440,"./views/views":442,"react":380}],419:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54387,7 +54392,7 @@ for (var key in config.entities) {
   var listFields = entity.list && entity.list.fields || entity.fields;
   entity.listFields = [];
   for (var name in listFields) {
-    entity.listFields.push(listFields[name].attribute);
+    entity.listFields.push(listFields[name]);
   }
 }
 
@@ -54467,6 +54472,8 @@ var _url = require("url");
 
 var _url2 = _interopRequireDefault(_url);
 
+var _utils = require("../utils");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createBuildQuery(fields) {
@@ -54482,7 +54489,7 @@ function createBuildQuery(fields) {
 
     if (req.filters.q) {
       query.q = req.filters.q;
-      query.fields = fields.join(",");
+      query.fields = (0, _utils.getSearchFields)(fields);
     }
     for (var key in req.filters) {
       if (key !== "q") {
@@ -54529,7 +54536,7 @@ function createBuildQuery(fields) {
   };
 }
 
-},{"url":410}],422:[function(require,module,exports){
+},{"../utils":433,"url":410}],422:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54591,6 +54598,12 @@ var _crudlConnectorsBase = require("@crudlio/crudl-connectors-base");
 
 var _middleware = require("@crudlio/crudl-connectors-base/lib/middleware");
 
+var _config = require("../../config");
+
+var _config2 = _interopRequireDefault(_config);
+
+var _utils = require("../../utils");
+
 var _errors = require("./errors");
 
 var _errors2 = _interopRequireDefault(_errors);
@@ -54603,10 +54616,17 @@ var _buildQuery = require("./buildQuery");
 
 var _buildQuery2 = _interopRequireDefault(_buildQuery);
 
+var _utils2 = require("../utils");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createRestConnector(baseURL, urlPath, fields) {
-  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use(_errors2.default);
+  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use((0, _middleware.transformData)("read", function (data) {
+    if (!fields) return data;
+    return (0, _utils2.loadDataForFields)(data, fields).catch(function (err) {
+      return console.log("failed to load data for fields:", err);
+    });
+  })).use(_errors2.default);
 }
 
 var _list = function _list(baseUrl, collection, fields) {
@@ -54631,7 +54651,7 @@ exports.default = function (baseUrl, urlPath, fields) {
   };
 };
 
-},{"./buildQuery":421,"./errors":422,"./pagination":424,"@crudlio/crudl-connectors-base":4,"@crudlio/crudl-connectors-base/lib/middleware":6}],424:[function(require,module,exports){
+},{"../../config":419,"../../utils":435,"../utils":433,"./buildQuery":421,"./errors":422,"./pagination":424,"@crudlio/crudl-connectors-base":4,"@crudlio/crudl-connectors-base/lib/middleware":6}],424:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54848,6 +54868,8 @@ var _url = require("url");
 
 var _url2 = _interopRequireDefault(_url);
 
+var _utils = require("../utils");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createBuildQuery(fields) {
@@ -54864,7 +54886,7 @@ function createBuildQuery(fields) {
     if (req.filters.q) {
       query.q = req.filters.q;
       console.log(typeof fields === "undefined" ? "undefined" : _typeof(fields));
-      query.fields = fields.join(",");
+      query.fields = (0, _utils.getSearchFields)(fields);
     }
     for (var key in req.filters) {
       if (key !== "q") {
@@ -54908,7 +54930,7 @@ function createBuildQuery(fields) {
   };
 }
 
-},{"url":410}],430:[function(require,module,exports){
+},{"../utils":433,"url":410}],430:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54962,8 +54984,63 @@ function crudlErrors(next) {
 }
 
 },{}],431:[function(require,module,exports){
-arguments[4][423][0].apply(exports,arguments)
-},{"./buildQuery":429,"./errors":430,"./pagination":432,"@crudlio/crudl-connectors-base":4,"@crudlio/crudl-connectors-base/lib/middleware":6,"dup":423}],432:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.detail = exports.list = undefined;
+
+var _crudlConnectorsBase = require("@crudlio/crudl-connectors-base");
+
+var _middleware = require("@crudlio/crudl-connectors-base/lib/middleware");
+
+var _errors = require("./errors");
+
+var _errors2 = _interopRequireDefault(_errors);
+
+var _pagination = require("./pagination");
+
+var _pagination2 = _interopRequireDefault(_pagination);
+
+var _buildQuery = require("./buildQuery");
+
+var _buildQuery2 = _interopRequireDefault(_buildQuery);
+
+var _utils = require("../utils");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function createRestConnector(baseURL, urlPath, fields) {
+  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use((0, _middleware.transformData)("read", function (data) {
+    if (!fields) return data;
+    return (0, _utils.loadDataForFields)(data, fields);
+  })).use(_errors2.default);
+}
+
+var _list = function _list(baseUrl, collection, fields) {
+  return createRestConnector(baseUrl, ":collection/", fields).use(_pagination2.default)(collection);
+};
+
+exports.list = _list;
+var _detail = function _detail(baseUrl, collection, id) {
+  return createRestConnector(baseUrl, ":collection/:id/")(collection, id);
+};
+
+exports.detail = _detail;
+
+exports.default = function (baseUrl, urlPath, fields) {
+  return {
+    list: function list() {
+      return _list(baseUrl, urlPath, fields);
+    },
+    detail: function detail(id) {
+      return _detail(baseUrl, urlPath, id);
+    }
+  };
+};
+
+},{"../utils":433,"./buildQuery":429,"./errors":430,"./pagination":432,"@crudlio/crudl-connectors-base":4,"@crudlio/crudl-connectors-base/lib/middleware":6}],432:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55031,6 +55108,114 @@ function numberedPagination(next) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.loadDataForFields = undefined;
+exports.getSearchFields = getSearchFields;
+
+var _config = require("../config");
+
+var _config2 = _interopRequireDefault(_config);
+
+var _utils = require("../utils");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function getSearchFields(fields) {
+  return fields.filter(function (f) {
+    return !f.type || f.type === "string";
+  }).map(function (f) {
+    return f.attribute;
+  }).join(",");
+}
+
+// load field with type reference and fill data with results
+var loadDataForFields = exports.loadDataForFields = function loadDataForFields(data, fields) {
+  var referenceFields = fields.filter(function (f) {
+    return f.type === "reference";
+  });
+  return Promise.all(referenceFields.map(function (f) {
+    return loadDataForField(data, f);
+  })).then(function () {
+    return data;
+  });
+};
+var loadDataForField = function loadDataForField(data, field) {
+  var values = {};
+  var entity = _config2.default.getEntity(field.entity);
+
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var row = _step.value;
+
+      var value = row[field.attribute];
+      if (!value) continue;
+      if (field.toMany) value.map(function (v) {
+        return values[v] = v;
+      });else values[value] = value;
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  var promises = Object.keys(values).map(function (valueKey) {
+    return entity.connector.detail(valueKey).read(crudl.req()).then(function (finalValue) {
+      var value = (0, _utils.getReferenceLabelForField)(finalValue, field);
+      values[valueKey] = value;
+    });
+  });
+  return Promise.all(promises).then(function () {
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      for (var _iterator2 = data[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var row = _step2.value;
+
+        var value = row[field.attribute];
+        if (field.toMany) row[field.attribute] = value.map(function (v) {
+          return values[v];
+        });else row[field.attribute] = values[value];
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
+      }
+    }
+  }).then(function () {
+    return data;
+  });
+};
+
+},{"../config":419,"../utils":435}],434:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -55087,170 +55272,74 @@ var CustomDashboard = function (_React$Component) {
 
 exports.default = CustomDashboard;
 
-},{"../config":419,"react":380}],434:[function(require,module,exports){
-'use strict';
+},{"../config":419,"react":380}],435:[function(require,module,exports){
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
-exports.continuousPagination = continuousPagination;
-exports.listQuery = listQuery;
-exports.join = join;
-exports.slugify = slugify;
-exports.formatDate = formatDate;
-exports.formatStringToDate = formatStringToDate;
-exports.transformErrors = transformErrors;
+exports.renderTemplate = exports.getReferenceLabelForField = undefined;
 exports.select = select;
 
-var _toPath = require('lodash/toPath');
+var _toPath = require("lodash/toPath");
 
 var _toPath2 = _interopRequireDefault(_toPath);
 
-var _get = require('lodash/get');
+var _get = require("lodash/get");
 
 var _get2 = _interopRequireDefault(_get);
 
+var _handlebars = require("handlebars");
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//-------------------------------------------------------------------
-function continuousPagination(res) {
-    var key = Object.keys(res.data.data)[0];
-    var hasNext = res.data.data[key].pageInfo.hasNextPage;
-    var next = hasNext && {
-        after: res.data.data[key].pageInfo.endCursor
-    };
-    return {
-        type: 'continuous',
-        next: next,
-        resultsTotal: res.data.data[key].totalCount,
-        filteredTotal: res.data.data[key].filteredCount
-    };
-}
+var getReferenceLabelForField = exports.getReferenceLabelForField = function getReferenceLabelForField(ref, field) {
+  if (field.template) {
+    return renderTemplate(field.template, ref);
+  }
+  return ref[field.targetField];
+};
 
-//-------------------------------------------------------------------
-function objectToArgs(object) {
-    var args = Object.getOwnPropertyNames(object).map(function (name) {
-        return name + ': ' + JSON.stringify(object[name]);
-    }).join(', ');
-    return args ? '(' + args + ')' : '';
-}
-
-function sorting(req) {
-    if (req.sorting && req.sorting.length > 0) {
-        return {
-            orderBy: req.sorting.map(function (field) {
-                var prefix = field.sorted == 'ascending' ? '' : '-';
-                return prefix + field.sortKey;
-            }).join(',')
-        };
-    }
-    return {};
-}
-
-function listQuery(options) {
-    if (Object.prototype.toString.call(options.fields) === '[object Array]') {
-        options.fields = options.fields.join(', ');
-    }
-    return function (req) {
-        var args = objectToArgs(Object.assign({}, options.args, req.page, req.filters, sorting(req)));
-        return '{\n            ' + options.name + ' ' + args + ' {\n                totalCount, filteredCount,\n                pageInfo { hasNextPage, hasPreviousPage, startCursor, endCursor }\n                edges { node { ' + options.fields + ' }}\n            }\n        }';
-    };
-}
-
-//-------------------------------------------------------------------
-function join(p1, p2, var1, var2) {
-    var defaultValue = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-
-    return Promise.all([p1, p2]).then(function (responses) {
-        return responses[0].set('data', responses[0].data.map(function (item) {
-            item[var1] = responses[1].data.find(function (obj) {
-                return obj[var2] == item[var1];
-            });
-            if (!item[var1]) {
-                item[var1] = defaultValue;
-            }
-            return item;
-        }));
-    });
-}
-
-// Credits for this function go to https://gist.github.com/mathewbyrne
-function slugify(text) {
-    if (typeof text !== 'undefined') {
-        return text.toString().toLowerCase().replace(/\s+/g, '-') // Replace spaces with -
-        .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-        .replace(/\-\-+/g, '-') // Replace multiple - with single -
-        .replace(/^-+/, '') // Trim - from start of text
-        .replace(/-+$/, ''); // Trim - from end of text
-    }
-    return undefined;
-}
-
-function formatDate(date) {
-    return date.toJSON().slice(0, 10);
-}
-
-function formatStringToDate(dateStr) {
-    var date = new Date(dateStr);
-    return date.toJSON().slice(0, 10);
-}
-
-/* transform mongoose error to redux-form (object) error
-mongoose:
-[
-    "__all__": "message",
-    "key": "message"
-]
-redux-form:
-[
-    "_error": "message",
-    "key": "message"
-]
-*/
-function transformErrors(errors) {
-    var errorsObj = {};
-    if (errors !== null && Array === errors.constructor) {
-        for (var i = 0; i < errors.length - 1; i = i + 2) {
-            var name = errors[i] === '__all__' ? '_error' : errors[i];
-            errorsObj[name] = errors[i + 1];
-        }
-        return errorsObj;
-    }
-    return errors;
-}
+var renderTemplate = exports.renderTemplate = function renderTemplate(template, values) {
+  var temp = _handlebars2.default.compile(template);
+  var v = temp(values);
+  return v;
+};
 
 /**
-* Works like lodash.get() with an extra feature: '[*]' selects
-* the complete array. For example:
-*
-*      let object = { name: 'Abc', tags: [ {id: 1, name: 'javascript'}, {id: 2, name: 'select'} ]}
-*      let names = select(object, 'tags[*].name')
-*      console.log(names)
-*      > ['javascript', 'select']
-*
-*/
+ * Works like lodash.get() with an extra feature: '[*]' selects
+ * the complete array. For example:
+ *
+ *      let object = { name: 'Abc', tags: [ {id: 1, name: 'javascript'}, {id: 2, name: 'select'} ]}
+ *      let names = select(object, 'tags[*].name')
+ *      console.log(names)
+ *      > ['javascript', 'select']
+ *
+ */
 function select(pathSpec, defaultValue) {
-    var _select = function _select(data, pathSpec, defaultValue) {
-        if (!data || !pathSpec) {
-            return defaultValue;
-        }
-        var path = (0, _toPath2.default)(pathSpec);
-        var pos = path.indexOf('*');
-        if (pos >= 0) {
-            // Break the path at '*' and do select() recursively on
-            // every element of the first path part
-            return (0, _get2.default)(data, path.slice(0, pos)).map(function (item) {
-                return _select(item, path.slice(pos + 1), defaultValue);
-            });
-        }
-        return (0, _get2.default)(data, path, defaultValue);
-    };
-    return function (data) {
-        return _select(data, pathSpec, defaultValue);
-    };
+  var _select = function _select(data, pathSpec, defaultValue) {
+    if (!data || !pathSpec) {
+      return defaultValue;
+    }
+    var path = (0, _toPath2.default)(pathSpec);
+    var pos = path.indexOf("*");
+    if (pos >= 0) {
+      // Break the path at '*' and do select() recursively on
+      // every element of the first path part
+      return (0, _get2.default)(data, path.slice(0, pos)).map(function (item) {
+        return _select(item, path.slice(pos + 1), defaultValue);
+      });
+    }
+    return (0, _get2.default)(data, path, defaultValue);
+  };
+  return function (data) {
+    return _select(data, pathSpec, defaultValue);
+  };
 }
 
-},{"lodash/get":310,"lodash/toPath":317}],435:[function(require,module,exports){
+},{"handlebars":187,"lodash/get":310,"lodash/toPath":317}],436:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55266,7 +55355,7 @@ Object.defineProperty(exports, "regex_url", {
   }
 });
 
-},{"./regex_url":436}],436:[function(require,module,exports){
+},{"./regex_url":437}],437:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55306,7 +55395,7 @@ var regex_url = exports.regex_url = new RegExp("^" +
 // resource path
 "(?:/\\S*)?" + "$", "i");
 
-},{}],437:[function(require,module,exports){
+},{}],438:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55326,10 +55415,6 @@ var _config = require("../../config");
 
 var _config2 = _interopRequireDefault(_config);
 
-var _handlebars = require("handlebars");
-
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
 var _joi = require("joi");
 
 var _joi2 = _interopRequireDefault(_joi);
@@ -55338,8 +55423,8 @@ var _render = require("./render");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var getListField = exports.getListField = function getListField(field, connectorFactory) {
-  var render = (0, _render.renderField)(field, connectorFactory);
+var getListField = exports.getListField = function getListField(field) {
+  var render = (0, _render.renderField)(field);
   var sortable = typeof render === "string";
   var main = field.main;
 
@@ -55352,7 +55437,7 @@ var getListField = exports.getListField = function getListField(field, connector
   };
 };
 
-var getField = exports.getField = function getField(field, connectorFactory) {
+var getField = exports.getField = function getField(field) {
   var type = field.type || "string";
   var f = null;
   switch (type) {
@@ -55368,7 +55453,7 @@ var getField = exports.getField = function getField(field, connectorFactory) {
       f = getChoicesField(field);
       break;
     case "reference":
-      f = getReferenceField(field, connectorFactory);
+      f = getReferenceField(field);
       break;
     case "float":
     case "int":
@@ -55453,8 +55538,9 @@ var getChoicesField = function getChoicesField(field) {
   };
 };
 
-var getReferenceField = function getReferenceField(field, connectorFactory) {
-  var connector = connectorFactory.connectorForEntity(_config2.default.getEntity(field.entity));
+var getReferenceField = function getReferenceField(field) {
+  var entity = _config2.default.getEntity(field.entity);
+  var connector = entity.connector;
   return {
     getValue: (0, _utils.select)(field.attribute),
     field: field.toMany ? "AutocompleteMultiple" : "Autocomplete",
@@ -55463,19 +55549,17 @@ var getReferenceField = function getReferenceField(field, connectorFactory) {
       search: function search(req) {
         req = req.filter("q", req.data.query);
         return connector.list().read(req).then(function (result) {
-          return Promise.all(result.map(function (item) {
-            return getReferenceLabelForField(item, field).then(function (label) {
-              return { value: item.id, label: label };
-            });
-          }));
+          return result.map(function (item) {
+            var label = (0, _utils.getReferenceLabelForField)(item, field);
+            return { value: item.id, label: label };
+          });
         });
       },
       select: function select(req) {
         return Promise.all(req.data.selection.map(function (item) {
           return connector.detail(item.value).read(crudl.req()).then(function (item) {
-            return getReferenceLabelForField(item, field).then(function (label) {
-              return { value: item.id, label: label };
-            });
+            var label = (0, _utils.getReferenceLabelForField)(item, field);
+            return { value: item.id, label: label };
           });
         }));
       }
@@ -55488,14 +55572,6 @@ var getReferenceField = function getReferenceField(field, connectorFactory) {
       // )
     }
   };
-};
-
-var getReferenceLabelForField = async function getReferenceLabelForField(ref, field) {
-  if (field.template) {
-    var temp = _handlebars2.default.compile(field.template);
-    return temp(ref);
-  }
-  return ref[field.targetField];
 };
 
 var getValidationForField = function getValidationForField(field) {
@@ -55544,25 +55620,19 @@ var getValidationForField = function getValidationForField(field) {
   };
 };
 
-},{"../../config":419,"../../utils":434,"../../validation":435,"./render":438,"handlebars":187,"inflection":215,"joi":222}],438:[function(require,module,exports){
+},{"../../config":419,"../../utils":435,"../../validation":436,"./render":439,"inflection":215,"joi":222}],439:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var renderField = exports.renderField = function renderField(field, connectorFactory) {
+var renderField = exports.renderField = function renderField(field) {
   var result = "string";
   if (field.type === "boolean") {
     result = "boolean";
   }
   if (field.type === "choice" || field.type === "choices") {
     result = renderChoicesField(field);
-  }
-
-  if (field.type === "reference") {
-    result = function result(value) {
-      return "reference " + value;
-    };
   }
 
   if (["float", "int"].indexOf(field.type) !== -1) {
@@ -55584,7 +55654,7 @@ var renderChoicesField = exports.renderChoicesField = function renderChoicesFiel
   };
 };
 
-},{}],439:[function(require,module,exports){
+},{}],440:[function(require,module,exports){
 "use strict";
 
 var _connectors = require("../connectors");
@@ -55632,7 +55702,7 @@ module.exports = {
   logout: undefined
 };
 
-},{"../connectors":420}],440:[function(require,module,exports){
+},{"../connectors":420}],441:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55664,8 +55734,8 @@ var _fields = require("./fields");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createAddView = exports.createAddView = function createAddView(entity, connectorFactory) {
-  var connector = connectorFactory.connectorForEntity(entity).list();
+var createAddView = exports.createAddView = function createAddView(entity) {
+  var connector = entity.connector.list();
   var title = entity.create && entity.create.title;
   if (!title) {
     var name = entity.name || entity.path;
@@ -55682,13 +55752,13 @@ var createAddView = exports.createAddView = function createAddView(entity, conne
     }
   };
 
-  createView.fieldsets = getFieldsets(entity, "create", connectorFactory);
+  createView.fieldsets = getFieldsets(entity, "create");
 
   return createView;
 };
 
-var createChangeView = exports.createChangeView = function createChangeView(entity, connectorFactory) {
-  var connector = connectorFactory.connectorForEntity(entity);
+var createChangeView = exports.createChangeView = function createChangeView(entity) {
+  var connector = entity.connector;
   var title = entity.edit && entity.edit.title;
   if (!title) {
     var name = entity.name || entity.path;
@@ -55718,7 +55788,7 @@ var createChangeView = exports.createChangeView = function createChangeView(enti
     }
   };
 
-  changeView.fieldsets = getFieldsets(entity, "edit", connectorFactory);
+  changeView.fieldsets = getFieldsets(entity, "edit");
 
   // changeView.tabs = [
   //   {
@@ -55770,7 +55840,7 @@ var createChangeView = exports.createChangeView = function createChangeView(enti
   return changeView;
 };
 
-var getFieldsets = function getFieldsets(entity, type, connectorFactory) {
+var getFieldsets = function getFieldsets(entity, type) {
   var fieldsets = entity[type] && entity[type].fieldsets || entity.fieldsets;
   if (!fieldsets) {
     var fields = entity[type] && entity[type].fields || entity.fields;
@@ -55779,13 +55849,13 @@ var getFieldsets = function getFieldsets(entity, type, connectorFactory) {
   return fieldsets.map(function (fieldset) {
     return Object.assign({}, fieldset, {
       fields: fieldset.fields.map(function (field) {
-        return (0, _fields.getField)(field, connectorFactory);
+        return (0, _fields.getField)(field);
       })
     });
   });
 };
 
-},{"../config":419,"../utils":434,"../validation":435,"./fields":437,"handlebars":187,"inflection":215,"joi":222}],441:[function(require,module,exports){
+},{"../config":419,"../utils":435,"../validation":436,"./fields":438,"handlebars":187,"inflection":215,"joi":222}],442:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55797,24 +55867,24 @@ var _views = require("./views.list");
 
 var _views2 = require("./views.detail");
 
-var createViews = exports.createViews = function createViews(entities, connectorFactory) {
+var createViews = exports.createViews = function createViews(entities) {
   var result = {};
   for (var key in entities) {
     var entity = entities[key];
-    result[key] = createView(entity, connectorFactory);
+    result[key] = createView(entity);
   }
   return result;
 };
 
-var createView = function createView(entity, connectorFactory) {
-  var listView = (0, _views.createListView)(entity, connectorFactory);
-  var changeView = (0, _views2.createChangeView)(entity, connectorFactory);
-  var addView = (0, _views2.createAddView)(entity, connectorFactory);
+var createView = function createView(entity) {
+  var listView = (0, _views.createListView)(entity);
+  var changeView = (0, _views2.createChangeView)(entity);
+  var addView = (0, _views2.createAddView)(entity);
 
   return { listView: listView, changeView: changeView, addView: addView };
 };
 
-},{"./views.detail":440,"./views.list":442}],442:[function(require,module,exports){
+},{"./views.detail":441,"./views.list":443}],443:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55830,8 +55900,8 @@ var _fields = require("./fields");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createListView = exports.createListView = function createListView(entity, connectorFactory) {
-  var connector = connectorFactory.connectorForEntity(entity).list();
+var createListView = exports.createListView = function createListView(entity) {
+  var connector = entity.connector.list();
 
   var title = entity.list && entity.list.title || entity.name || entity.path;
 
@@ -55845,32 +55915,32 @@ var createListView = exports.createListView = function createListView(entity, co
     }
   };
 
-  listView.fields = getFields(entity, connectorFactory);
-  listView.filters = getFilters(entity, connectorFactory);
+  listView.fields = getFields(entity);
+  listView.filters = getFilters(entity);
 
   return listView;
 };
 
-var getFields = function getFields(entity, connectorFactory) {
+var getFields = function getFields(entity) {
   var fields = entity.list && entity.list.fields || entity.fields;
 
-  return fields.map(_fields.getListField, connectorFactory);
+  return fields.map(_fields.getListField);
 };
 
-var getFilters = function getFilters(entity, connectorFactory) {
+var getFilters = function getFilters(entity) {
   var filters = entity.list && entity.list.filters;
 
   if (!filters) return undefined;
 
   var fields = filters.fields.map(function (field) {
-    return (0, _fields.getField)(field, connectorFactory);
+    return (0, _fields.getField)(field);
   });
   return {
     fields: fields
   };
 };
 
-},{"./fields":437,"inflection":215}],443:[function(require,module,exports){
+},{"./fields":438,"inflection":215}],444:[function(require,module,exports){
 "use strict";
 
 var _admin = require("./admin/admin");
@@ -55881,4 +55951,4 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 crudl.render(_admin2.default);
 
-},{"./admin/admin":418}]},{},[443]);
+},{"./admin/admin":418}]},{},[444]);
