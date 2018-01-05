@@ -57653,6 +57653,9 @@ var getField = exports.getField = function getField(field) {
     default:
       f = {
         field: _inflection2.default.camelize(type),
+        normalize: function normalize(value) {
+          return value + "";
+        },
         denormalize: function denormalize(value) {
           return value + "";
         }

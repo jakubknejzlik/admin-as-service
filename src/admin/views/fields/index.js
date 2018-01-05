@@ -86,6 +86,9 @@ export const getField = field => {
     default:
       f = {
         field: inflection.camelize(type),
+        normalize: value => {
+          return value + "";
+        },
         denormalize: value => {
           return value + "";
         }
