@@ -57635,12 +57635,15 @@ var getField = exports.getField = function getField(field) {
         field: _DateTimeField2.default,
         type: field.type,
         normalize: function normalize(value) {
+          var m = (0, _moment2.default)(value);
+          if (!m.isValid()) return null;
           // should display warning when displaying dates in different timezone!
-          if (field.type === "date") return (0, _moment2.default)(value).format("YYYY-MM-DD");
-          return (0, _moment2.default)(value).format("YYYY-MM-DDTHH:mm:ss");
+          if (field.type === "date") return m.format("YYYY-MM-DD");
+          return m.format("YYYY-MM-DDTHH:mm:ss");
         },
         denormalize: function denormalize(value) {
           var m = (0, _moment2.default)(value);
+          if (!m.isValid()) return null;
           return m.format();
         }
       };
