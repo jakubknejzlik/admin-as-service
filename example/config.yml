@@ -18,8 +18,7 @@ entities:
     identifier: id
     list:
       listActions:
-        - title: test
-          icon: new-window
+        - title: redirect for {{values.title}}
           action: redirect
           url: 'https://www.google.cz/?ei={{values.id}}&blah={{values.title}}&access_token={{auth.access_token}}'
           target: blank

@@ -58160,18 +58160,17 @@ var getActionField = function getActionField(entity) {
 
 var getButtonForAction = function getButtonForAction(field, action, i) {
   var url = action.url;
+  var title = action.title;
 
   var values = Object.assign({}, field, { auth: crudl.auth });
-  url = url.replace(/{{[^}]+}}/g, function (x) {
-    return (0, _utils.renderTemplate)(x, values);
-  });
+
+  url = (0, _utils.renderTemplate)(url, values);
+  title = (0, _utils.renderTemplate)(title, values);
 
   return _react2.default.createElement(
     'a',
     { key: i, href: url, target: action.target },
-    action.title,
-    ' ',
-    field.id
+    title
   );
 };
 

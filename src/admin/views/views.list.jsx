@@ -55,15 +55,16 @@ const getActionField = entity => {
 
 const getButtonForAction = (field, action, i) => {
   let url = action.url;
+  let title = action.title;
 
   let values = Object.assign({}, field, { auth: crudl.auth });
-  url = url.replace(/{{[^}]+}}/g, x => {
-    return renderTemplate(x, values);
-  });
+
+  url = renderTemplate(url, values);
+  title = renderTemplate(title, values);
 
   return (
     <a key={i} href={url} target={action.target}>
-      {action.title} {field.id}
+      {title}
     </a>
   );
 };
