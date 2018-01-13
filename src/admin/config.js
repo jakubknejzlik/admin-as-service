@@ -11,8 +11,10 @@ for (let key in config.entities) {
   }
 }
 
-config.getEntity = name => {
+export const getEntity = name => {
   return config.entities[name];
 };
+
+config.getEntity = getEntity;
 
 export default config;

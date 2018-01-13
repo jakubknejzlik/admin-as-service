@@ -137,3 +137,18 @@ entities:
         - attribute: salary
           type: float
           format: '$0,0.00'
+    edit:
+      title: User Edit title
+      tabtitle: Basic info
+      tabs:
+        - title: Posts Tab
+          itemTitle: '{{title}}'
+          reference:
+            entity: posts
+            attribute: user_id
+          fields:
+            - attribute: title
+            - attribute: active
+              label: Active
+              type: boolean
+

@@ -1,10 +1,6 @@
-import inflection from "inflection";
-import { select } from "../utils";
-import { regex_url } from "../validation";
-import config from "../config";
-import Handlebars from "handlebars";
-import Joi from "joi";
-import { getField } from "./fields";
+import { getEntity } from '../config';
+import { renderTemplate } from '../utils';
+import { getField } from './fields';
 
 export const createAddView = entity => {
   let connector = entity.connector.list();
@@ -62,52 +58,7 @@ export const createChangeView = entity => {
 
   changeView.fieldsets = getFieldsets(entity, "edit");
 
-  // changeView.tabs = [
-  //   {
-  //     title: "Links",
-  //     actions: {
-  //       list: req => Promise.resolve([]), // Filter results by the current blog entry
-  //       add: req => Promise.resolve({}),
-  //       save: req => Promise.resolve({}),
-  //       delete: req => Promise.resolve({})
-  //     },
-  //     getItemTitle: data => `${data.url} (${data.title})`, // Define the item title (Optional)
-  //     fields: [
-  //       {
-  //         name: "url",
-  //         label: "URL",
-  //         field: "URL",
-  //         link: true
-  //       },
-  //       {
-  //         name: "title",
-  //         label: "Title",
-  //         field: "String"
-  //       },
-  //       {
-  //         name: "id", // Needed in order to make update and delete requests
-  //         hidden: true // Don't show this one
-  //       },
-  //       {
-  //         name: "entry", // The foreign key field
-  //         hidden: true, // Don't show this one
-  //         initialValue: () => crudl.context("id") // initialValue is used when adding a new link
-  //       }
-  //     ],
-  //     validate(data) {
-  //       // Check the data
-  //       return data;
-  //     },
-  //     normalize(data) {
-  //       // Prepare data for the frontend
-  //       return data;
-  //     },
-  //     denormalize(data) {
-  //       // Prepare data for the backend
-  //       return data;
-  //     }
-  //   }
-  // ];
+  changeView.tabs = getTabs(entity);
 
   return changeView;
 };
@@ -123,4 +74,35 @@ const getFieldsets = (entity, type) => {
       fields: fieldset.fields.map(field => getField(field))
     })
   );
+};
+
+const getTabs = entity => {
+  let tabs = (entity.edit && entity.edit.tabs) || [];
+  return tabs.map(getTab);
+};
+
+const getTab = tab => {
+  let entity = getEntity(tab.reference.entity);
+  let listConnector = entity.connector.list();
+
+  let fields = tab.fields.map(field => getField(field));
+  fields.push({ name: "id", hidden: true });
+  fields.push({
+    name: tab.reference.attribute,
+    hidden: true,
+    getValue: () => crudl.path.id
+  });
+
+  return {
+    title: tab.title,
+    actions: {
+      list: req =>
+        listConnector.read(req.filter(tab.reference.attribute, crudl.path.id)),
+      add: req => listConnector.create(req),
+      save: req => entity.connector.detail(req.data.id).update(req),
+      delete: req => entity.connector.detail(req.data.id).delete(req)
+    },
+    getItemTitle: data => renderTemplate(tab.itemTitle, data), // Define the item title (Optional)
+    fields: fields
+  };
 };

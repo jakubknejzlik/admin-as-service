@@ -56403,9 +56403,11 @@ for (var key in config.entities) {
   }
 }
 
-config.getEntity = function (name) {
+var getEntity = exports.getEntity = function getEntity(name) {
   return config.entities[name];
 };
+
+config.getEntity = getEntity;
 
 exports.default = config;
 
@@ -57909,47 +57911,29 @@ module.exports = {
 };
 
 },{"../connectors":396}],419:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.createChangeView = exports.createAddView = undefined;
 
-var _inflection = require("inflection");
+var _config = require('../config');
 
-var _inflection2 = _interopRequireDefault(_inflection);
+var _utils = require('../utils');
 
-var _utils = require("../utils");
-
-var _validation = require("../validation");
-
-var _config = require("../config");
-
-var _config2 = _interopRequireDefault(_config);
-
-var _handlebars = require("handlebars");
-
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
-var _joi = require("joi");
-
-var _joi2 = _interopRequireDefault(_joi);
-
-var _fields = require("./fields");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _fields = require('./fields');
 
 var createAddView = exports.createAddView = function createAddView(entity) {
   var connector = entity.connector.list();
   var title = entity.create && entity.create.title;
   if (!title) {
     var name = entity.name || entity.path;
-    title = name + " Create";
+    title = name + ' Create';
   }
 
   var createView = {
-    path: entity.path + "/new",
+    path: entity.path + '/new',
     title: title,
     actions: {
       add: function add(req) {
@@ -57968,11 +57952,11 @@ var createChangeView = exports.createChangeView = function createChangeView(enti
   var title = entity.edit && entity.edit.title;
   if (!title) {
     var name = entity.name || entity.path;
-    title = name + " Detail";
+    title = name + ' Detail';
   }
 
   var changeView = {
-    path: entity.path + "/:id",
+    path: entity.path + '/:id',
     title: title,
     actions: {
       get: function get(req) {
@@ -57996,52 +57980,7 @@ var createChangeView = exports.createChangeView = function createChangeView(enti
 
   changeView.fieldsets = getFieldsets(entity, "edit");
 
-  // changeView.tabs = [
-  //   {
-  //     title: "Links",
-  //     actions: {
-  //       list: req => Promise.resolve([]), // Filter results by the current blog entry
-  //       add: req => Promise.resolve({}),
-  //       save: req => Promise.resolve({}),
-  //       delete: req => Promise.resolve({})
-  //     },
-  //     getItemTitle: data => `${data.url} (${data.title})`, // Define the item title (Optional)
-  //     fields: [
-  //       {
-  //         name: "url",
-  //         label: "URL",
-  //         field: "URL",
-  //         link: true
-  //       },
-  //       {
-  //         name: "title",
-  //         label: "Title",
-  //         field: "String"
-  //       },
-  //       {
-  //         name: "id", // Needed in order to make update and delete requests
-  //         hidden: true // Don't show this one
-  //       },
-  //       {
-  //         name: "entry", // The foreign key field
-  //         hidden: true, // Don't show this one
-  //         initialValue: () => crudl.context("id") // initialValue is used when adding a new link
-  //       }
-  //     ],
-  //     validate(data) {
-  //       // Check the data
-  //       return data;
-  //     },
-  //     normalize(data) {
-  //       // Prepare data for the frontend
-  //       return data;
-  //     },
-  //     denormalize(data) {
-  //       // Prepare data for the backend
-  //       return data;
-  //     }
-  //   }
-  // ];
+  changeView.tabs = getTabs(entity);
 
   return changeView;
 };
@@ -58061,7 +58000,51 @@ var getFieldsets = function getFieldsets(entity, type) {
   });
 };
 
-},{"../config":395,"../utils":413,"../validation":414,"./fields":416,"handlebars":186,"inflection":214,"joi":221}],420:[function(require,module,exports){
+var getTabs = function getTabs(entity) {
+  var tabs = entity.edit && entity.edit.tabs || [];
+  return tabs.map(getTab);
+};
+
+var getTab = function getTab(tab) {
+  var entity = (0, _config.getEntity)(tab.reference.entity);
+  var listConnector = entity.connector.list();
+
+  var fields = tab.fields.map(function (field) {
+    return (0, _fields.getField)(field);
+  });
+  fields.push({ name: "id", hidden: true });
+  fields.push({
+    name: tab.reference.attribute,
+    hidden: true,
+    getValue: function getValue() {
+      return crudl.path.id;
+    }
+  });
+
+  return {
+    title: tab.title,
+    actions: {
+      list: function list(req) {
+        return listConnector.read(req.filter(tab.reference.attribute, crudl.path.id));
+      },
+      add: function add(req) {
+        return listConnector.create(req);
+      },
+      save: function save(req) {
+        return entity.connector.detail(req.data.id).update(req);
+      },
+      delete: function _delete(req) {
+        return entity.connector.detail(req.data.id).delete(req);
+      }
+    },
+    getItemTitle: function getItemTitle(data) {
+      return (0, _utils.renderTemplate)(tab.itemTitle, data);
+    }, // Define the item title (Optional)
+    fields: fields
+  };
+};
+
+},{"../config":395,"../utils":413,"./fields":416}],420:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
