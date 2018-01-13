@@ -5,7 +5,7 @@ basePath: /
 messages:
   dashboard: Hello world!
 auth:
-  grantType: dummy
+  grantType: dummy #use password for username/password credentials
   authorizeUrl: https://auth.example.com/oauth/token
   clientId: client_id
   clientSecret: client_secret
@@ -21,14 +21,8 @@ entities:
         - title: test
           icon: new-window
           action: redirect
-          url: 'https://www.google.cz/?ei={{entry.values.id}}'
+          url: 'https://www.google.cz/?ei={{values.id}}&blah={{values.title}}&access_token={{auth.access_token}}'
           target: blank
-        - edit
-        - delete
-      actions:
-        - create
-        - export
-        - filter
       title: My custom posts title
       filters:
         fields:

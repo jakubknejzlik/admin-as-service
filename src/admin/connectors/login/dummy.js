@@ -1,16 +1,6 @@
-import jwt from "jsonwebtoken";
-import axios from "axios";
-
-import {
-  createFrontendConnector,
-  createBackendConnector
-} from "@crudlio/crudl-connectors-base";
-import {
-  crudToHttp,
-  url,
-  transformData
-} from "@crudlio/crudl-connectors-base/lib/middleware";
-import restErrors from "../rest/errors";
+import { createFrontendConnector } from '@crudlio/crudl-connectors-base';
+import { transformData } from '@crudlio/crudl-connectors-base/lib/middleware';
+import axios from 'axios';
 
 export const dummy = config => {
   return createFrontendConnector({
@@ -20,7 +10,7 @@ export const dummy = config => {
   }).use(
     transformData("create", data => {
       return {
-        info: { username: "dummy user" }
+        info: { access_token: "dummy_token", username: "dummy user" }
       };
     })
   );

@@ -1,14 +1,8 @@
-import jwt from "jsonwebtoken";
-import {
-  createFrontendConnector,
-  createBackendConnector
-} from "@crudlio/crudl-connectors-base";
-import {
-  crudToHttp,
-  url,
-  transformData
-} from "@crudlio/crudl-connectors-base/lib/middleware";
-import restErrors from "../rest/errors";
+import { createBackendConnector, createFrontendConnector } from '@crudlio/crudl-connectors-base';
+import { crudToHttp, transformData, url } from '@crudlio/crudl-connectors-base/lib/middleware';
+import jwt from 'jsonwebtoken';
+
+import restErrors from '../rest/errors';
 
 export const password = config =>
   createFrontendConnector(createBackendConnector())
@@ -34,6 +28,7 @@ export const password = config =>
       transformData("create", data => {
         var userInfo = jwt.decode(data.access_token);
         userInfo = userInfo.user || userInfo;
+        userInfo.access_token = data.access_token;
         return {
           requestHeaders: {
             Authorization: `Bearer ${data.access_token}`
