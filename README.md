@@ -154,3 +154,11 @@ oauth:
 You can also use application in fullscreen mode (only content is display,
 navigation bar and side menu is hidden). Application switch to this mode when
 `fullscreen=true` substring is detected in URL.
+
+# Docker
+
+You can run administration locally with docker:
+
+```
+docker run --rm -p 8080:80 -v /path/to/config.yml:/code/config.yml jakubknejzlik/admin-as-service
+```
