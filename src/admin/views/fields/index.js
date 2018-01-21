@@ -19,7 +19,21 @@ export const getListField = field => {
     label: field.label || inflection.camelize(field.attribute),
     main: main,
     sortable: sortable,
+    getValue: getValueFn(field),
     render: render
+  };
+};
+
+const getValueFn = field => {
+  return values => {
+    const value = values[field.attribute];
+    switch (field.type) {
+      case "date":
+        return moment(value).format("LL");
+      case "datetime":
+        return moment(value).format("LLL");
+    }
+    return value;
   };
 };
 
@@ -102,6 +116,9 @@ export const getField = field => {
     name: field.attribute,
     label: field.label || inflection.camelize(field.attribute),
     required: field.required,
+    hidden: field.hidden,
+    disabled: field.disabled,
+    readOnly: field.readonly,
     helpText: field.helpText,
     validate: getValidationForField(field)
   });

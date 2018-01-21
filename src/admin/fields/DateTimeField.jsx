@@ -12,7 +12,7 @@ class DateTimeField extends React.Component {
   types = { date: "date", datetime: "datetime-local" };
 
   render() {
-    const { id, input, disabled, type } = this.props;
+    const { id, input, disabled, type, readOnly } = this.props;
 
     return (
       // <DateTimePicker />
@@ -21,7 +21,7 @@ class DateTimeField extends React.Component {
           id={id}
           type={this.types[type]}
           autoComplete="off"
-          readOnly={false}
+          readOnly={readOnly}
           {...input}
           disabled={disabled}
         />

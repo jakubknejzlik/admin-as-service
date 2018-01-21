@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import { renderTemplate } from '../utils';
-import { getField, getListField } from './fields';
+import { renderTemplate } from "../utils";
+import { getField, getListField } from "./fields";
 
 export const createListView = entity => {
   let connector = entity.connector.list();
@@ -29,13 +29,14 @@ export const createListView = entity => {
 const getFields = entity => {
   let fields = (entity.list && entity.list.fields) || entity.fields;
 
+  fields = fields.filter(x => !x.hidden);
+
   return fields.map(getListField);
 };
 
 const getActionField = entity => {
   let listActions = entity.list && entity.list.listActions;
   if (!listActions) return null;
-
   let field = {
     name: "_actions",
     label: " ",

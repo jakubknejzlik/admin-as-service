@@ -57148,6 +57148,7 @@ var loadDataForFields = function loadDataForFields(data, fields) {
 var loadDataForField = function loadDataForField(data, field) {
   var values = {};
   var entity = _config2.default.getEntity(field.entity);
+  var foreignKey = field.foreignKey || field.attribute;
 
   var _iteratorNormalCompletion = true;
   var _didIteratorError = false;
@@ -57157,7 +57158,7 @@ var loadDataForField = function loadDataForField(data, field) {
     for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var row = _step.value;
 
-      var value = row[field.attribute];
+      var value = row[foreignKey];
       if (!value) continue;
       if (field.toMany) value.map(function (v) {
         return values[v] = v;
@@ -57184,6 +57185,7 @@ var loadDataForField = function loadDataForField(data, field) {
       values[valueKey] = value;
     });
   });
+
   return Promise.all(promises).then(function () {
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
@@ -57193,7 +57195,7 @@ var loadDataForField = function loadDataForField(data, field) {
       for (var _iterator2 = data[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
         var row = _step2.value;
 
-        var value = row[field.attribute];
+        var value = row[foreignKey];
         if (field.toMany) row[field.attribute] = value.map(function (v) {
           return values[v];
         });else row[field.attribute] = values[value];
@@ -57330,7 +57332,8 @@ var DateTimeField = function (_React$Component) {
           id = _props.id,
           input = _props.input,
           disabled = _props.disabled,
-          type = _props.type;
+          type = _props.type,
+          readOnly = _props.readOnly;
 
 
       return (
@@ -57342,7 +57345,7 @@ var DateTimeField = function (_React$Component) {
             id: id,
             type: this.types[type],
             autoComplete: "off",
-            readOnly: false
+            readOnly: readOnly
           }, input, {
             disabled: disabled
           }))
@@ -57399,7 +57402,8 @@ var NumberField = exports.NumberField = function (_React$Component) {
       var _props = this.props,
           id = _props.id,
           input = _props.input,
-          step = _props.step;
+          step = _props.step,
+          readOnly = _props.readOnly;
 
       return _react2.default.createElement(
         "div",
@@ -57408,7 +57412,8 @@ var NumberField = exports.NumberField = function (_React$Component) {
           type: "number",
           step: step,
           id: id,
-          autoComplete: "off"
+          autoComplete: "off",
+          readOnly: readOnly
         }, input, {
           "data-field-display-name": id,
           "data-field-display-values": input.value
@@ -57596,7 +57601,21 @@ var getListField = exports.getListField = function getListField(field) {
     label: field.label || _inflection2.default.camelize(field.attribute),
     main: main,
     sortable: sortable,
+    getValue: getValueFn(field),
     render: render
+  };
+};
+
+var getValueFn = function getValueFn(field) {
+  return function (values) {
+    var value = values[field.attribute];
+    switch (field.type) {
+      case "date":
+        return (0, _moment2.default)(value).format("LL");
+      case "datetime":
+        return (0, _moment2.default)(value).format("LLL");
+    }
+    return value;
   };
 };
 
@@ -57679,6 +57698,9 @@ var getField = exports.getField = function getField(field) {
     name: field.attribute,
     label: field.label || _inflection2.default.camelize(field.attribute),
     required: field.required,
+    hidden: field.hidden,
+    disabled: field.disabled,
+    readOnly: field.readonly,
     helpText: field.helpText,
     validate: getValidationForField(field)
   });
@@ -58074,20 +58096,20 @@ var createView = function createView(entity) {
 };
 
 },{"./views.detail":419,"./views.list":421}],421:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.createListView = undefined;
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _utils = require('../utils');
+var _utils = require("../utils");
 
-var _fields = require('./fields');
+var _fields = require("./fields");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -58117,13 +58139,16 @@ var createListView = exports.createListView = function createListView(entity) {
 var getFields = function getFields(entity) {
   var fields = entity.list && entity.list.fields || entity.fields;
 
+  fields = fields.filter(function (x) {
+    return !x.hidden;
+  });
+
   return fields.map(_fields.getListField);
 };
 
 var getActionField = function getActionField(entity) {
   var listActions = entity.list && entity.list.listActions;
   if (!listActions) return null;
-
   var field = {
     name: "_actions",
     label: " ",
@@ -58151,7 +58176,7 @@ var getButtonForAction = function getButtonForAction(field, action, i) {
   title = (0, _utils.renderTemplate)(title, values);
 
   return _react2.default.createElement(
-    'a',
+    "a",
     { key: i, href: url, target: action.target },
     title
   );

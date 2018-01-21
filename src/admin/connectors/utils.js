@@ -35,9 +35,10 @@ const loadDataForFields = (data, fields) => {
 const loadDataForField = (data, field) => {
   let values = {};
   let entity = config.getEntity(field.entity);
+  const foreignKey = field.foreignKey || field.attribute;
 
   for (let row of data) {
-    let value = row[field.attribute];
+    let value = row[foreignKey];
     if (!value) continue;
     if (field.toMany) value.map(v => (values[v] = v));
     else values[value] = value;
@@ -52,10 +53,11 @@ const loadDataForField = (data, field) => {
         values[valueKey] = value;
       });
   });
+
   return Promise.all(promises)
     .then(() => {
       for (let row of data) {
-        let value = row[field.attribute];
+        let value = row[foreignKey];
         if (field.toMany) row[field.attribute] = value.map(v => values[v]);
         else row[field.attribute] = values[value];
       }
