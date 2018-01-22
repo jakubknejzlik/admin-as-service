@@ -20,7 +20,7 @@ entities:
       listActions:
         - title: redirect for {{values.title}}
           action: redirect
-          url: 'https://www.google.cz/?ei={{values.id}}&blah={{values.title}}&access_token={{auth.access_token}}'
+          url: 'https://www.google.cz/?ei={{values.id}}&blah={{values.title}}&firstname={{values.user_firstname}}&access_token={{auth.access_token}}'
           target: blank
       title: My custom posts title
       filters:
@@ -109,6 +109,12 @@ entities:
         entity: users
         template: "{{firstname}} {{lastname}}"
         targetField: firstname
+      - attribute: user_firstname
+        foreignKey: user_id
+        label: User
+        type: reference
+        entity: users
+        template: "{{firstname}}"
   users:
     name: User
     readonly: true

@@ -57138,14 +57138,17 @@ var loadDataForFields = function loadDataForFields(data, fields) {
     return f.type === "reference";
   });
   var pagination = data.pagination;
+  var referenceData = data.map(function (a) {
+    return Object.assign({}, a);
+  });
   return Promise.all(referenceFields.map(function (f) {
-    return loadDataForField(data, f);
+    return loadDataForField(data, f, referenceData);
   })).then(function () {
     data.pagination = pagination;
     return data;
   });
 };
-var loadDataForField = function loadDataForField(data, field) {
+var loadDataForField = function loadDataForField(data, field, referenceData) {
   var values = {};
   var entity = _config2.default.getEntity(field.entity);
   var foreignKey = field.foreignKey || field.attribute;
@@ -57187,32 +57190,14 @@ var loadDataForField = function loadDataForField(data, field) {
   });
 
   return Promise.all(promises).then(function () {
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = data[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var row = _step2.value;
-
-        var value = row[foreignKey];
-        if (field.toMany) row[field.attribute] = value.map(function (v) {
-          return values[v];
-        });else row[field.attribute] = values[value];
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-          _iterator2.return();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
+    for (var rowIndex = 0; rowIndex < data.length; rowIndex++) {
+      var row = data[rowIndex];
+      var referenceRow = referenceData[rowIndex];
+      var value = referenceRow[foreignKey];
+      console.log(referenceRow, "=>", foreignKey, value, values);
+      if (field.toMany) row[field.attribute] = value.map(function (v) {
+        return values[v];
+      });else row[field.attribute] = values[value];
     }
   }).then(function () {
     return data;

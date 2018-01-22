@@ -25,14 +25,15 @@ export const transformReference = fields => next => {
 const loadDataForFields = (data, fields) => {
   let referenceFields = fields.filter(f => f.type === "reference");
   let pagination = data.pagination;
-  return Promise.all(referenceFields.map(f => loadDataForField(data, f))).then(
-    () => {
-      data.pagination = pagination;
-      return data;
-    }
-  );
+  let referenceData = data.map(a => Object.assign({}, a));
+  return Promise.all(
+    referenceFields.map(f => loadDataForField(data, f, referenceData))
+  ).then(() => {
+    data.pagination = pagination;
+    return data;
+  });
 };
-const loadDataForField = (data, field) => {
+const loadDataForField = (data, field, referenceData) => {
   let values = {};
   let entity = config.getEntity(field.entity);
   const foreignKey = field.foreignKey || field.attribute;
@@ -56,8 +57,11 @@ const loadDataForField = (data, field) => {
 
   return Promise.all(promises)
     .then(() => {
-      for (let row of data) {
-        let value = row[foreignKey];
+      for (let rowIndex = 0; rowIndex < data.length; rowIndex++) {
+        let row = data[rowIndex];
+        let referenceRow = referenceData[rowIndex];
+        let value = referenceRow[foreignKey];
+        console.log(referenceRow, "=>", foreignKey, value, values);
         if (field.toMany) row[field.attribute] = value.map(v => values[v]);
         else row[field.attribute] = values[value];
       }
