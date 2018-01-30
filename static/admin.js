@@ -56944,20 +56944,21 @@ function modifyReadRequest(entity, fields) {
     } else {
       var args = {};
       args.sort = "[$sort]";
-      args.filter = req.filters;
+      args.filter = "[$filter]";
 
       var items = new _graphqlQuery2.default("items");
       items.find.apply(items, ["id"].concat(_toConsumableArray(transformedFields)));
 
-      req.data = generateRequestData(queryName, args, [items, "count"], "query($sort:[" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "SortType!])");
+      req.data = generateRequestData(queryName, args, [items, "count"], "query($sort:[" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "SortType!],$filter:" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "FilterType)");
 
-      req.data.query = req.data.query.replace('"[$sort]"', "$sort");
+      req.data.query = req.data.query.replace('"[$sort]"', "$sort").replace('"[$filter]"', "$filter");
 
       var sorting = req.sorting.map(function (s) {
         return s.sortKey.toUpperCase() + (s.sorted == "descending" ? "_DESC" : "");
       });
 
-      req.data.variables = { sort: sorting };
+      req.data.variables = { sort: sorting, filter: req.filters };
+      console.log(req.data);
     }
 
     return req;

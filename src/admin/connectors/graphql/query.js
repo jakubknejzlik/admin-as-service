@@ -31,7 +31,7 @@ function modifyReadRequest(entity, fields) {
     } else {
       let args = {};
       args.sort = "[$sort]";
-      args.filter = req.filters;
+      args.filter = "[$filter]";
 
       let items = new Query("items");
       items.find("id", ...transformedFields);
@@ -42,16 +42,21 @@ function modifyReadRequest(entity, fields) {
         [items, "count"],
         `query($sort:[${inflection.capitalize(
           inflection.singularize(entity)
-        )}SortType!])`
+        )}SortType!],$filter:${inflection.capitalize(
+          inflection.singularize(entity)
+        )}FilterType)`
       );
 
-      req.data.query = req.data.query.replace('"[$sort]"', "$sort");
+      req.data.query = req.data.query
+        .replace('"[$sort]"', "$sort")
+        .replace('"[$filter]"', "$filter");
 
       let sorting = req.sorting.map(
         s => s.sortKey.toUpperCase() + (s.sorted == "descending" ? "_DESC" : "")
       );
 
-      req.data.variables = { sort: sorting };
+      req.data.variables = { sort: sorting, filter: req.filters };
+      console.log(req.data);
     }
 
     return req;
