@@ -29,9 +29,29 @@ function modifyReadRequest(entity, fields) {
         ...transformedFields
       ]);
     } else {
+      let args = {};
+      args.sort = "[$sort]";
+      args.filter = req.filters;
+
       let items = new Query("items");
       items.find("id", ...transformedFields);
-      req.data = generateRequestData(queryName, {}, [items, "count"]);
+
+      req.data = generateRequestData(
+        queryName,
+        args,
+        [items, "count"],
+        `query($sort:[${inflection.capitalize(
+          inflection.singularize(entity)
+        )}SortType!])`
+      );
+
+      req.data.query = req.data.query.replace('"[$sort]"', "$sort");
+
+      let sorting = req.sorting.map(
+        s => s.sortKey.toUpperCase() + (s.sorted == "descending" ? "_DESC" : "")
+      );
+
+      req.data.variables = { sort: sorting };
     }
 
     return req;

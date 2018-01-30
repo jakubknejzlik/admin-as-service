@@ -56942,9 +56942,22 @@ function modifyReadRequest(entity, fields) {
     if (id) {
       req.data = generateRequestData(queryName, { id: id }, ["id"].concat(_toConsumableArray(transformedFields)));
     } else {
+      var args = {};
+      args.sort = "[$sort]";
+      args.filter = req.filters;
+
       var items = new _graphqlQuery2.default("items");
       items.find.apply(items, ["id"].concat(_toConsumableArray(transformedFields)));
-      req.data = generateRequestData(queryName, {}, [items, "count"]);
+
+      req.data = generateRequestData(queryName, args, [items, "count"], "query($sort:[" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "SortType!])");
+
+      req.data.query = req.data.query.replace('"[$sort]"', "$sort");
+
+      var sorting = req.sorting.map(function (s) {
+        return s.sortKey.toUpperCase() + (s.sorted == "descending" ? "_DESC" : "");
+      });
+
+      req.data.variables = { sort: sorting };
     }
 
     return req;
