@@ -4,7 +4,7 @@ import { renderTemplate } from "../utils";
 import { getField, getListField } from "./fields";
 
 export const createListView = entity => {
-  let connector = entity.connector.list();
+  let listConnector = entity.connector.list();
 
   let title = (entity.list && entity.list.title) || entity.name || entity.path;
 
@@ -13,7 +13,7 @@ export const createListView = entity => {
     title: title,
     actions: {
       list: function(req) {
-        return connector.read(req);
+        return listConnector.read(req);
       }
     }
   };
@@ -22,6 +22,26 @@ export const createListView = entity => {
   let actionField = getActionField(entity);
   if (actionField) listView.fields.push(actionField);
   listView.filters = getFilters(entity);
+
+  listView.bulkActions = {
+    delete: {
+      description: "Delete",
+      modalConfirm: {
+        message:
+          "All the selected items will be deleted. This action cannot be reversed!",
+        modalType: "modal-delete",
+        labelConfirm: "Delete All"
+      },
+      action: selection =>
+        Promise.all(
+          selection.map(item =>
+            entity.connector.detail(item.id).delete(crudl.req())
+          )
+        ).then(() =>
+          crudl.successMessage(`All items (${selection.length}) were deleted`)
+        )
+    }
+  };
 
   return listView;
 };

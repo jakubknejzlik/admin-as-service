@@ -104,9 +104,15 @@ export const getField = field => {
       f = {
         field: inflection.camelize(type),
         normalize: value => {
+          if (typeof value === "undefined" || !value) {
+            return value;
+          }
           return value + "";
         },
         denormalize: value => {
+          if (typeof value === "undefined" || !value) {
+            return value;
+          }
           return value + "";
         }
       };

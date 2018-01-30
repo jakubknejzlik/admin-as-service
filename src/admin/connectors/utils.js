@@ -61,7 +61,6 @@ const loadDataForField = (data, field, referenceData) => {
         let row = data[rowIndex];
         let referenceRow = referenceData[rowIndex];
         let value = referenceRow[foreignKey];
-        console.log(referenceRow, "=>", foreignKey, value, values);
         if (field.toMany) row[field.attribute] = value.map(v => values[v]);
         else row[field.attribute] = values[value];
       }

@@ -1,6 +1,6 @@
-import { getEntity } from '../config';
-import { renderTemplate } from '../utils';
-import { getField } from './fields';
+import { getEntity } from "../config";
+import { renderTemplate } from "../utils";
+import { getField } from "./fields";
 
 export const createAddView = entity => {
   let connector = entity.connector.list();
@@ -26,6 +26,16 @@ export const createAddView = entity => {
 };
 
 export const createChangeView = entity => {
+  let fieldsets = (entity.edit && entity.edit.fieldsets) || entity.fieldsets;
+  if (!fieldsets) {
+    let fields = (entity.edit && entity.edit.fields) || entity.fields;
+    fieldsets = [{ fields }];
+  }
+  let fields = fieldsets.reduce(
+    (accumulator, currentValue) => accumulator.concat(currentValue.fields),
+    []
+  );
+
   let connector = entity.connector;
   let title = entity.edit && entity.edit.title;
   if (!title) {
@@ -38,13 +48,13 @@ export const createChangeView = entity => {
     title: title,
     actions: {
       get: function(req) {
-        return connector.detail(crudl.path.id).read(req);
+        return connector.detail(crudl.path.id, fields).read(req);
       },
       save: function(req) {
-        return connector.detail(crudl.path.id).update(req);
+        return connector.detail(crudl.path.id, fields).update(req);
       },
       delete: function(req) {
-        return connector.detail(crudl.path.id).delete(req);
+        return connector.detail(crudl.path.id, fields).delete(req);
       }
     },
     validate(data) {

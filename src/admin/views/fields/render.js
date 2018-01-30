@@ -1,3 +1,5 @@
+import { getReferenceLabelForField } from "../../utils";
+
 export const renderField = field => {
   let result = "string";
   if (field.type === "boolean") {
@@ -12,7 +14,9 @@ export const renderField = field => {
   }
 
   if (field.type === "reference" && field.toMany) {
-    result = v => v.join(", ");
+    result = v => {
+      return Array.isArray(v) ? v.join(", ") : v;
+    };
   }
 
   return result;
