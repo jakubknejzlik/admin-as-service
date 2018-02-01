@@ -58719,7 +58719,7 @@ var getTabs = function getTabs(entity) {
 
 var getTab = function getTab(tab) {
   var entity = (0, _config.getEntity)(tab.reference.entity);
-  var listConnector = entity.connector.list();
+  var listConnector = entity.connector.list(tab.fields);
 
   var fields = tab.fields.map(function (field) {
     return (0, _fields2.getField)(field);

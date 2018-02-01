@@ -93,7 +93,7 @@ const getTabs = entity => {
 
 const getTab = tab => {
   let entity = getEntity(tab.reference.entity);
-  let listConnector = entity.connector.list();
+  let listConnector = entity.connector.list(tab.fields);
 
   let fields = tab.fields.map(field => getField(field));
   fields.push({ name: "id", hidden: true });
