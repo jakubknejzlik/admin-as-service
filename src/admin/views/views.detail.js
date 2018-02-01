@@ -109,8 +109,9 @@ const getTab = tab => {
       list: req =>
         listConnector.read(req.filter(tab.reference.attribute, crudl.path.id)),
       add: req => listConnector.create(req),
-      save: req => entity.connector.detail(req.data.id).update(req),
-      delete: req => entity.connector.detail(req.data.id).delete(req)
+      save: req => entity.connector.detail(req.data.id, tab.fields).update(req),
+      delete: req =>
+        entity.connector.detail(req.data.id, tab.fields).delete(req)
     },
     getItemTitle: data => renderTemplate(tab.itemTitle, data), // Define the item title (Optional)
     fields: fields

@@ -58743,10 +58743,10 @@ var getTab = function getTab(tab) {
         return listConnector.create(req);
       },
       save: function save(req) {
-        return entity.connector.detail(req.data.id).update(req);
+        return entity.connector.detail(req.data.id, tab.fields).update(req);
       },
       delete: function _delete(req) {
-        return entity.connector.detail(req.data.id).delete(req);
+        return entity.connector.detail(req.data.id, tab.fields).delete(req);
       }
     },
     getItemTitle: function getItemTitle(data) {
