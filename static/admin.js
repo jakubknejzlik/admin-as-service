@@ -56958,7 +56958,6 @@ function modifyReadRequest(entity, fields) {
       });
 
       req.data.variables = { sort: sorting, filter: req.filters };
-      console.log(req.data);
     }
 
     return req;
@@ -56970,10 +56969,14 @@ function modifyCreateRequest(entity, fields) {
     var id = req.params.length >= 0 && parseInt(req.params[0]);
 
     var queryName = "create" + _inflection2.default.capitalize(_inflection2.default.singularize(entity));
-    req.data = generateRequestData(queryName, { input: req.data }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
+    var inputData = req.data;
+    req.data = generateRequestData(queryName, { input: "[$input]" }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
       return x.attribute;
-    }))), "mutation");
+    }))), "mutation($input:" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "CreateInputType!)");
     req.queryName = queryName;
+
+    req.data.query = req.data.query.replace('"[$input]"', "$input");
+    req.data.variables = { input: inputData };
 
     return req;
   };
@@ -56983,13 +56986,15 @@ function modifyUpdateRequest(entity, fields) {
   return function (req) {
     var id = req.params.length >= 0 && parseInt(req.params[0]);
 
-    console.log("data:", req.data);
-
+    var inputData = Object.assign({}, req.data);
+    delete inputData.id;
     var queryName = "update" + _inflection2.default.capitalize(entity);
-    req.data = generateRequestData(queryName, { id: id, input: req.data }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
+    req.data = generateRequestData(queryName, { id: id, input: "[$input]" }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
       return x.attribute;
-    }))), "mutation");
+    }))), "mutation($input:" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "UpdateInputType!)");
     req.queryName = queryName;
+    req.data.query = req.data.query.replace('"[$input]"', "$input");
+    req.data.variables = { input: inputData };
 
     return req;
   };

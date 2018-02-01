@@ -56,7 +56,6 @@ function modifyReadRequest(entity, fields) {
       );
 
       req.data.variables = { sort: sorting, filter: req.filters };
-      console.log(req.data);
     }
 
     return req;
@@ -70,13 +69,19 @@ function modifyCreateRequest(entity, fields) {
     let queryName = `create${inflection.capitalize(
       inflection.singularize(entity)
     )}`;
+    let inputData = req.data;
     req.data = generateRequestData(
       queryName,
-      { input: req.data },
+      { input: "[$input]" },
       ["id", ...fields.map(x => x.attribute)],
-      "mutation"
+      `mutation($input:${inflection.capitalize(
+        inflection.singularize(entity)
+      )}CreateInputType!)`
     );
     req.queryName = queryName;
+
+    req.data.query = req.data.query.replace('"[$input]"', "$input");
+    req.data.variables = { input: inputData };
 
     return req;
   };
@@ -86,16 +91,20 @@ function modifyUpdateRequest(entity, fields) {
   return req => {
     let id = req.params.length >= 0 && parseInt(req.params[0]);
 
-    console.log("data:", req.data);
-
+    let inputData = Object.assign({}, req.data);
+    delete inputData.id;
     let queryName = `update${inflection.capitalize(entity)}`;
     req.data = generateRequestData(
       queryName,
-      { id, input: req.data },
+      { id, input: "[$input]" },
       ["id", ...fields.map(x => x.attribute)],
-      "mutation"
+      `mutation($input:${inflection.capitalize(
+        inflection.singularize(entity)
+      )}UpdateInputType!)`
     );
     req.queryName = queryName;
+    req.data.query = req.data.query.replace('"[$input]"', "$input");
+    req.data.variables = { input: inputData };
 
     return req;
   };
