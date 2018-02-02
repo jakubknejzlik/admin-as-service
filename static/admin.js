@@ -58700,7 +58700,7 @@ var createChangeView = exports.createChangeView = function createChangeView(enti
 var getFieldsets = function getFieldsets(entity, type) {
   var fieldsets = entity[type] && entity[type].fieldsets || entity.fieldsets;
   if (!fieldsets) {
-    var fields = entity[type] && entity[type].fields || entity.fields;
+    var fields = entity[type] && entity[type].fields || entity.fields || [];
     fieldsets = [{ fields: fields }];
   }
   return fieldsets.map(function (fieldset) {
@@ -58772,7 +58772,9 @@ var createViews = exports.createViews = function createViews(entities) {
   var result = {};
   for (var key in entities) {
     var entity = entities[key];
-    result[key] = createView(entity);
+    if (!entity.hidden) {
+      result[key] = createView(entity);
+    }
   }
   return result;
 };
@@ -58845,7 +58847,7 @@ var createListView = exports.createListView = function createListView(entity) {
 };
 
 var getFields = function getFields(entity) {
-  var fields = entity.list && entity.list.fields || entity.fields;
+  var fields = entity.list && entity.list.fields || entity.fields || [];
 
   fields = fields.filter(function (x) {
     return !x.hidden;

@@ -47,7 +47,7 @@ export const createListView = entity => {
 };
 
 const getFields = entity => {
-  let fields = (entity.list && entity.list.fields) || entity.fields;
+  let fields = (entity.list && entity.list.fields) || entity.fields || [];
 
   fields = fields.filter(x => !x.hidden);
 

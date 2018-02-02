@@ -117,8 +117,7 @@ entities:
         template: "{{firstname}}"
   users:
     name: User
-    readonly: true
-    hidden: true
+    hidden: false
     fields:
       - attribute: firstname
       - attribute: lastname
@@ -157,4 +156,7 @@ entities:
             - attribute: active
               label: Active
               type: boolean
+  hidden:
+    name: Hidden entity
+    hidden: true
 

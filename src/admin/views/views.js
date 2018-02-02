@@ -5,7 +5,9 @@ export const createViews = entities => {
   let result = {};
   for (let key in entities) {
     let entity = entities[key];
-    result[key] = createView(entity);
+    if (!entity.hidden) {
+      result[key] = createView(entity);
+    }
   }
   return result;
 };

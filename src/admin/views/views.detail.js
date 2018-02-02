@@ -76,7 +76,7 @@ export const createChangeView = entity => {
 const getFieldsets = (entity, type) => {
   let fieldsets = (entity[type] && entity[type].fieldsets) || entity.fieldsets;
   if (!fieldsets) {
-    let fields = (entity[type] && entity[type].fields) || entity.fields;
+    let fields = (entity[type] && entity[type].fields) || entity.fields || [];
     fieldsets = [{ fields }];
   }
   return fieldsets.map(fieldset =>
