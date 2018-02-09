@@ -133,6 +133,8 @@ entities:
         type: date
       - attribute: lastVisit
         type: datetime
+      - attribute: wakeupTime
+        type: time
     list:
       fields:
         - attribute: firstname

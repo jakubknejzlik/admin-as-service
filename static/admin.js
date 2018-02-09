@@ -57993,7 +57993,7 @@ var DateTimeField = function (_React$Component) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DateTimeField.__proto__ || Object.getPrototypeOf(DateTimeField)).call.apply(_ref, [this].concat(args))), _this), _this.types = { date: "date", datetime: "datetime-local" }, _temp), _possibleConstructorReturn(_this, _ret);
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DateTimeField.__proto__ || Object.getPrototypeOf(DateTimeField)).call.apply(_ref, [this].concat(args))), _this), _this.types = { date: "date", datetime: "datetime-local", time: "time" }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
   _createClass(DateTimeField, [{
@@ -58346,6 +58346,12 @@ var getField = exports.getField = function getField(field) {
           if (!m.isValid()) return null;
           return m.format();
         }
+      };
+      break;
+    case "time":
+      f = {
+        field: _DateTimeField2.default,
+        type: field.type
       };
       break;
     case "text":

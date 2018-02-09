@@ -95,6 +95,12 @@ export const getField = field => {
         }
       };
       break;
+    case "time":
+      f = {
+        field: DateTimeField,
+        type: field.type
+      };
+      break;
     case "text":
       f = {
         field: "Textarea"

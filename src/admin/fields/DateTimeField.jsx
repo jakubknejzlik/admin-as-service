@@ -9,7 +9,7 @@ class DateTimeField extends React.Component {
     // getDate: React.PropTypes.func.isRequired
   };
 
-  types = { date: "date", datetime: "datetime-local" };
+  types = { date: "date", datetime: "datetime-local", time: "time" };
 
   render() {
     const { id, input, disabled, type, readOnly } = this.props;
