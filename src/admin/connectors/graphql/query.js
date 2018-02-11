@@ -40,9 +40,9 @@ function modifyReadRequest(entity, fields) {
         queryName,
         args,
         [items, "count"],
-        `query($sort:[${inflection.capitalize(
+        `query($sort:[${inflection.camelize(
           inflection.singularize(entity)
-        )}SortType!],$filter:${inflection.capitalize(
+        )}SortType!],$filter:${inflection.camelize(
           inflection.singularize(entity)
         )}FilterType)`
       );
@@ -66,7 +66,7 @@ function modifyCreateRequest(entity, fields) {
   return req => {
     let id = req.params.length >= 0 && parseInt(req.params[0]);
 
-    let queryName = `create${inflection.capitalize(
+    let queryName = `create${inflection.camelize(
       inflection.singularize(entity)
     )}`;
     let inputData = req.data;
@@ -74,7 +74,7 @@ function modifyCreateRequest(entity, fields) {
       queryName,
       { input: "[$input]" },
       ["id", ...fields.map(x => x.attribute)],
-      `mutation($input:${inflection.capitalize(
+      `mutation($input:${inflection.camelize(
         inflection.singularize(entity)
       )}CreateInputType!)`
     );
@@ -93,12 +93,12 @@ function modifyUpdateRequest(entity, fields) {
 
     let inputData = Object.assign({}, req.data);
     delete inputData.id;
-    let queryName = `update${inflection.capitalize(entity)}`;
+    let queryName = `update${inflection.camelize(entity)}`;
     req.data = generateRequestData(
       queryName,
       { id, input: "[$input]" },
       ["id", ...fields.map(x => x.attribute)],
-      `mutation($input:${inflection.capitalize(
+      `mutation($input:${inflection.camelize(
         inflection.singularize(entity)
       )}UpdateInputType!)`
     );
@@ -114,7 +114,7 @@ function modifyDeleteRequest(entity, fields) {
   return req => {
     let id = req.params.length >= 0 && parseInt(req.params[0]);
 
-    let queryName = `delete${inflection.capitalize(entity)}`;
+    let queryName = `delete${inflection.camelize(entity)}`;
     req.data = generateRequestData(
       queryName,
       { id },

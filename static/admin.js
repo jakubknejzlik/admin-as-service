@@ -56949,7 +56949,7 @@ function modifyReadRequest(entity, fields) {
       var items = new _graphqlQuery2.default("items");
       items.find.apply(items, ["id"].concat(_toConsumableArray(transformedFields)));
 
-      req.data = generateRequestData(queryName, args, [items, "count"], "query($sort:[" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "SortType!],$filter:" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "FilterType)");
+      req.data = generateRequestData(queryName, args, [items, "count"], "query($sort:[" + _inflection2.default.camelize(_inflection2.default.singularize(entity)) + "SortType!],$filter:" + _inflection2.default.camelize(_inflection2.default.singularize(entity)) + "FilterType)");
 
       req.data.query = req.data.query.replace('"[$sort]"', "$sort").replace('"[$filter]"', "$filter");
 
@@ -56968,11 +56968,11 @@ function modifyCreateRequest(entity, fields) {
   return function (req) {
     var id = req.params.length >= 0 && parseInt(req.params[0]);
 
-    var queryName = "create" + _inflection2.default.capitalize(_inflection2.default.singularize(entity));
+    var queryName = "create" + _inflection2.default.camelize(_inflection2.default.singularize(entity));
     var inputData = req.data;
     req.data = generateRequestData(queryName, { input: "[$input]" }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
       return x.attribute;
-    }))), "mutation($input:" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "CreateInputType!)");
+    }))), "mutation($input:" + _inflection2.default.camelize(_inflection2.default.singularize(entity)) + "CreateInputType!)");
     req.queryName = queryName;
 
     req.data.query = req.data.query.replace('"[$input]"', "$input");
@@ -56988,10 +56988,10 @@ function modifyUpdateRequest(entity, fields) {
 
     var inputData = Object.assign({}, req.data);
     delete inputData.id;
-    var queryName = "update" + _inflection2.default.capitalize(entity);
+    var queryName = "update" + _inflection2.default.camelize(entity);
     req.data = generateRequestData(queryName, { id: id, input: "[$input]" }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
       return x.attribute;
-    }))), "mutation($input:" + _inflection2.default.capitalize(_inflection2.default.singularize(entity)) + "UpdateInputType!)");
+    }))), "mutation($input:" + _inflection2.default.camelize(_inflection2.default.singularize(entity)) + "UpdateInputType!)");
     req.queryName = queryName;
     req.data.query = req.data.query.replace('"[$input]"', "$input");
     req.data.variables = { input: inputData };
@@ -57004,7 +57004,7 @@ function modifyDeleteRequest(entity, fields) {
   return function (req) {
     var id = req.params.length >= 0 && parseInt(req.params[0]);
 
-    var queryName = "delete" + _inflection2.default.capitalize(entity);
+    var queryName = "delete" + _inflection2.default.camelize(entity);
     req.data = generateRequestData(queryName, { id: id }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
       return x.attribute;
     }))), "mutation");
