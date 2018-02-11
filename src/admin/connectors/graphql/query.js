@@ -21,7 +21,9 @@ function modifyReadRequest(entity, fields) {
 
     req.queryName = queryName;
 
-    let transformedFields = fields.map(field => field.attribute);
+    let transformedFields = fields.map(
+      field => field.foreignKey || field.attribute
+    );
 
     if (id) {
       req.data = generateRequestData(queryName, { id }, [
@@ -73,7 +75,7 @@ function modifyCreateRequest(entity, fields) {
     req.data = generateRequestData(
       queryName,
       { input: "[$input]" },
-      ["id", ...fields.map(x => x.attribute)],
+      ["id", ...fields.map(x => x.foreignKey || x.attribute)],
       `mutation($input:${inflection.camelize(
         inflection.singularize(entity)
       )}CreateInputType!)`
@@ -97,7 +99,7 @@ function modifyUpdateRequest(entity, fields) {
     req.data = generateRequestData(
       queryName,
       { id, input: "[$input]" },
-      ["id", ...fields.map(x => x.attribute)],
+      ["id", ...fields.map(x => x.foreignKey || x.attribute)],
       `mutation($input:${inflection.camelize(
         inflection.singularize(entity)
       )}UpdateInputType!)`
@@ -118,7 +120,7 @@ function modifyDeleteRequest(entity, fields) {
     req.data = generateRequestData(
       queryName,
       { id },
-      ["id", ...fields.map(x => x.attribute)],
+      ["id", ...fields.map(x => x.foreignKey || x.attribute)],
       "mutation"
     );
     req.queryName = queryName;

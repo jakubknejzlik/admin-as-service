@@ -56936,7 +56936,7 @@ function modifyReadRequest(entity, fields) {
     req.queryName = queryName;
 
     var transformedFields = fields.map(function (field) {
-      return field.attribute;
+      return field.foreignKey || field.attribute;
     });
 
     if (id) {
@@ -56971,7 +56971,7 @@ function modifyCreateRequest(entity, fields) {
     var queryName = "create" + _inflection2.default.camelize(_inflection2.default.singularize(entity));
     var inputData = req.data;
     req.data = generateRequestData(queryName, { input: "[$input]" }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
-      return x.attribute;
+      return x.foreignKey || x.attribute;
     }))), "mutation($input:" + _inflection2.default.camelize(_inflection2.default.singularize(entity)) + "CreateInputType!)");
     req.queryName = queryName;
 
@@ -56990,7 +56990,7 @@ function modifyUpdateRequest(entity, fields) {
     delete inputData.id;
     var queryName = "update" + _inflection2.default.camelize(entity);
     req.data = generateRequestData(queryName, { id: id, input: "[$input]" }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
-      return x.attribute;
+      return x.foreignKey || x.attribute;
     }))), "mutation($input:" + _inflection2.default.camelize(_inflection2.default.singularize(entity)) + "UpdateInputType!)");
     req.queryName = queryName;
     req.data.query = req.data.query.replace('"[$input]"', "$input");
@@ -57006,7 +57006,7 @@ function modifyDeleteRequest(entity, fields) {
 
     var queryName = "delete" + _inflection2.default.camelize(entity);
     req.data = generateRequestData(queryName, { id: id }, ["id"].concat(_toConsumableArray(fields.map(function (x) {
-      return x.attribute;
+      return x.foreignKey || x.attribute;
     }))), "mutation");
     req.queryName = queryName;
 
