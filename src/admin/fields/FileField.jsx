@@ -6,6 +6,10 @@ class DateTimeField extends React.Component {
     // readAs: React.PropTypes.oneOf(["DataURL", "ArrayBuffer", "Text"])
   };
 
+  static defaultProps = {
+    onClear: () => null
+  };
+
   handleFileSelect() {
     const { dispatch, input, onSelect } = this.props;
     const file = this.fileInput.files[0];
@@ -47,8 +51,17 @@ class DateTimeField extends React.Component {
               value={input.value}
             />
           </div>
-          <ul role="group" className="buttons">
-            {input.value && (
+          {input.value && (
+            <ul role="group" className="buttons">
+              <li>
+                <a
+                  role="button"
+                  aria-label="Open link"
+                  className="action-open-in-new icon-only"
+                  target="_blank"
+                  href={input.value}
+                />
+              </li>
               <li>
                 <button
                   type="button"
@@ -59,8 +72,8 @@ class DateTimeField extends React.Component {
                   &zwnj;
                 </button>
               </li>
-            )}
-          </ul>
+            </ul>
+          )}
         </div>
         <div className="field">
           <input

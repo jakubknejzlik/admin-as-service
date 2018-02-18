@@ -58133,10 +58133,21 @@ var DateTimeField = function (_React$Component) {
               value: input.value
             })
           ),
-          _react2.default.createElement(
+          input.value && _react2.default.createElement(
             "ul",
             { role: "group", className: "buttons" },
-            input.value && _react2.default.createElement(
+            _react2.default.createElement(
+              "li",
+              null,
+              _react2.default.createElement("a", {
+                role: "button",
+                "aria-label": "Open link",
+                className: "action-open-in-new icon-only",
+                target: "_blank",
+                href: input.value
+              })
+            ),
+            _react2.default.createElement(
               "li",
               null,
               _react2.default.createElement(
@@ -58177,6 +58188,11 @@ var DateTimeField = function (_React$Component) {
 DateTimeField.propTypes = {
   // onClear: React.PropTypes.func,
   // readAs: React.PropTypes.oneOf(["DataURL", "ArrayBuffer", "Text"])
+};
+DateTimeField.defaultProps = {
+  onClear: function onClear() {
+    return null;
+  }
 };
 exports.default = crudl.baseField(DateTimeField);
 
