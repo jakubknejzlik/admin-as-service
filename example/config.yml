@@ -1,6 +1,7 @@
 title: admin-as-service example
 url: '${API_URL}'
 apiType: json-server
+fileUploadURL: http://example.com/upload
 basePath: /
 messages:
   dashboard: Hello world!
@@ -135,6 +136,8 @@ entities:
         type: datetime
       - attribute: wakeupTime
         type: time
+      - attribute: document
+        type: file
     list:
       fields:
         - attribute: firstname

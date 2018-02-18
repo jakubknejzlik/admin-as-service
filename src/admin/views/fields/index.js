@@ -7,7 +7,9 @@ import { renderField } from "./render";
 import { getReferenceLabelForField } from "../../utils";
 import DateTimeField from "../../fields/DateTimeField";
 import NumberField from "../../fields/NumberField";
+import FileField from "../../fields/FileField";
 import moment from "moment";
+import fetch from "node-fetch";
 
 export const getListField = field => {
   let render = renderField(field);
@@ -74,6 +76,29 @@ export const getField = field => {
       f = {
         field: "URL",
         link: field.link || false
+      };
+      break;
+    case "file":
+      f = {
+        field: FileField,
+        onSelect: (file, dataURL) => {
+          let uploadURL = config.fileUploadURL;
+
+          if (!uploadURL)
+            throw new Error(`configuration fileUploadURL is missing`);
+
+          return fetch(uploadURL, {
+            method: "POST",
+            body: file
+          })
+            .then(res => res.json())
+            .then(json => {
+              return json.url;
+            })
+            .then(url => {
+              return url;
+            });
+        }
       };
       break;
     case "date":
