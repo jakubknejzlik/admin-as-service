@@ -23,6 +23,7 @@ class DateTimeField extends React.Component {
         this.fileInput.value = "";
       })
       .catch(error => {
+        this.fileInput.value = "";
         dispatch(crudl.errorMessage(`Upload failed: ${error}`));
       });
   }

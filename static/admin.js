@@ -58088,6 +58088,7 @@ var DateTimeField = function (_React$Component) {
         input.onChange(result);
         _this2.fileInput.value = "";
       }).catch(function (error) {
+        _this2.fileInput.value = "";
         dispatch(crudl.errorMessage("Upload failed: " + error));
       });
     }
