@@ -1,6 +1,47 @@
 import toPath from "lodash/toPath";
 import get from "lodash/get";
-import Handlebars from "handlebars";
+import _ from "underscore";
+import moment from "moment";
+import numeral from "numeral";
+
+import config from "./config";
+
+// load a locale
+numeral.register("locale", "custom", {
+  delimiters: {
+    thousands:
+      (config.numeral &&
+        config.numeral.delimiters &&
+        config.numeral.delimiters.thousands) ||
+      ",",
+    decimal:
+      (config.numeral &&
+        config.numeral.delimiters &&
+        config.numeral.delimiters.decimal) ||
+      "."
+  },
+  abbreviations: {
+    thousand: "k",
+    million: "m",
+    billion: "b",
+    trillion: "t"
+  },
+  // ordinal: function(number) {
+  //   return number === 1 ? "er" : "ème";
+  // },
+  currency: {
+    symbol:
+      (config.numeral &&
+        config.numeral.currency &&
+        config.numeral.currency.symbol) ||
+      "$"
+  }
+});
+
+numeral.locale("custom");
+_.templateSettings = {
+  interpolate: /\{\{(.+?)\}\}/g
+};
 
 export const getReferenceLabelForField = (ref, field) => {
   if (field.template) {
@@ -10,7 +51,8 @@ export const getReferenceLabelForField = (ref, field) => {
 };
 
 export const renderTemplate = (template, values) => {
-  let temp = Handlebars.compile(template);
+  let temp = _.template(template);
+  values = Object.assign({}, values, { moment, numeral });
   let v = temp(values);
   return v;
 };

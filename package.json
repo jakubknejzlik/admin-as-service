@@ -31,7 +31,6 @@
     "express": "^4.16.2",
     "express-graceful-exit": "^0.4.0",
     "graphql-query-builder": "^1.0.7",
-    "handlebars": "^4.0.11",
     "inflection": "^1.12.0",
     "joi": "^13.0.2",
     "js-yaml": "^3.8.4",
@@ -43,6 +42,7 @@
     "react": "^16.2.0",
     "react-datepicker": "^1.0.4",
     "react-datetime": "^2.11.1",
+    "underscore": "^1.8.3",
     "uuid": "^3.0.1"
   },
   "devDependencies": {

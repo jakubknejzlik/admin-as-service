@@ -5,6 +5,12 @@ fileUploadURL: http://example.com/upload
 basePath: /
 messages:
   dashboard: Hello world!
+numeral:
+  currency:
+    symbol: €
+  delimiters:
+    thousands: ' '
+    decimal: ','
 auth:
   grantType: dummy #use password for username/password credentials
   authorizeUrl: https://auth.example.com/oauth/token
@@ -152,7 +158,7 @@ entities:
       tabtitle: Basic info
       tabs:
         - title: Posts Tab
-          itemTitle: '{{title}}'
+          itemTitle: '{{title}} {{active?"active":"inactive"}} {{moment().format("lll")}} {{numeral(123032542).format("$0,0.0")}}'
           reference:
             entity: posts
             attribute: user_id
