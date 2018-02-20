@@ -107,7 +107,11 @@ const getTab = tab => {
     title: tab.title,
     actions: {
       list: req =>
-        listConnector.read(req.filter(tab.reference.attribute, crudl.path.id)),
+        listConnector.read(
+          req
+            .filter(tab.reference.attribute, crudl.path.id)
+            .sort(getSortingForOrder(tab.order))
+        ),
       add: req => listConnector.create(req),
       save: req => entity.connector.detail(req.data.id, tab.fields).update(req),
       delete: req =>
@@ -116,4 +120,18 @@ const getTab = tab => {
     getItemTitle: data => renderTemplate(tab.itemTitle, data), // Define the item title (Optional)
     fields: fields
   };
+};
+
+// convert -field => {sorder:'descending',sortKey:'field'}
+const getSortingForOrder = order => {
+  if (!order) return [];
+  if (typeof order === "string") order = order.split(",");
+  return order.map(item => {
+    let dir = "ascending";
+    if (item[0] === "-") {
+      item = item.replace("-", "");
+      dir = "descending";
+    }
+    return { sorted: dir, sortKey: item };
+  });
 };

@@ -53594,7 +53594,7 @@ var getTab = function getTab(tab) {
     title: tab.title,
     actions: {
       list: function list(req) {
-        return listConnector.read(req.filter(tab.reference.attribute, crudl.path.id));
+        return listConnector.read(req.filter(tab.reference.attribute, crudl.path.id).sort(getSortingForOrder(tab.order)));
       },
       add: function add(req) {
         return listConnector.create(req);
@@ -53611,6 +53611,20 @@ var getTab = function getTab(tab) {
     }, // Define the item title (Optional)
     fields: fields
   };
+};
+
+// convert -field => {sorder:'descending',sortKey:'field'}
+var getSortingForOrder = function getSortingForOrder(order) {
+  if (!order) return [];
+  if (typeof order === "string") order = order.split(",");
+  return order.map(function (item) {
+    var dir = "ascending";
+    if (item[0] === "-") {
+      item = item.replace("-", "");
+      dir = "descending";
+    }
+    return { sorted: dir, sortKey: item };
+  });
 };
 
 },{"../config":357,"../utils":382,"./fields":385}],389:[function(require,module,exports){

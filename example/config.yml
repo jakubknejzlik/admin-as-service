@@ -159,6 +159,7 @@ entities:
       tabs:
         - title: Posts Tab
           itemTitle: '{{title}} {{active?"active":"inactive"}} {{moment().format("lll")}} {{numeral(123032542).format("$0,0.0")}}'
+          order: active
           reference:
             entity: posts
             attribute: user_id
