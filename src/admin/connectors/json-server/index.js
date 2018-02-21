@@ -15,16 +15,16 @@ import numberedPagination from "./pagination";
 import buildQuery from "./buildQuery";
 import { transformReference } from "../utils";
 
-function createRestConnector(baseURL, urlPath, fields) {
+function createRestConnector(baseURL, urlPath, fields, limit) {
   return createFrontendConnector(createBackendConnector({ baseURL }))
-    .use(buildQuery(fields))
+    .use(buildQuery(fields, limit))
     .use(crudToHttp())
     .use(url(urlPath))
     .use(errors);
 }
 
-export const list = (baseUrl, collection, fields) =>
-  createRestConnector(baseUrl, ":collection/", fields)
+export const list = (baseUrl, collection, fields, limit) =>
+  createRestConnector(baseUrl, ":collection/", fields, limit)
     .use(numberedPagination)
     .use(transformReference(fields))(collection);
 
@@ -32,9 +32,10 @@ export const detail = (baseUrl, collection, id) => {
   return createRestConnector(baseUrl, ":collection/:id/")(collection, id);
 };
 
-export default (baseUrl, urlPath, fields) => {
+export default (baseUrl, urlPath, defaultFields) => {
   return {
-    list: () => list(baseUrl, urlPath, fields),
+    list: (fields, limit) =>
+      list(baseUrl, urlPath, fields || defaultFields, limit),
     detail: id => detail(baseUrl, urlPath, id)
   };
 };

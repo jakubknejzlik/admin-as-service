@@ -16,7 +16,8 @@ function generateRequestData(queryName, args, fields, type = "query") {
 
 function modifyReadRequest(entity, fields) {
   return req => {
-    let id = (req.params.length >= 0 && parseInt(req.params[0])) || null;
+    // let id = (req.params.length >= 0 && parseInt(req.params[0])) || null;
+    let [id, limit] = req.params;
     let queryName = entity;
 
     req.queryName = queryName;
@@ -26,6 +27,7 @@ function modifyReadRequest(entity, fields) {
     );
 
     if (id) {
+      id = parseInt(id);
       req.data = generateRequestData(queryName, { id }, [
         "id",
         ...transformedFields
@@ -34,6 +36,7 @@ function modifyReadRequest(entity, fields) {
       let args = {};
       args.sort = "[$sort]";
       args.filter = "[$filter]";
+      args.limit = limit;
 
       let items = new Query("items");
       items.find("id", ...transformedFields);

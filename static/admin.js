@@ -51443,8 +51443,8 @@ function createRestConnector(baseURL, entity, fields) {
 }
 
 // import errors from "./errors";
-var _list = function _list(baseUrl, entity, fields) {
-  return createRestConnector(baseUrl, entity, fields).use((0, _transforms.transformListResult)(entity, fields)).use(_pagination2.default).use((0, _utils.transformReference)(fields))();
+var _list = function _list(baseUrl, entity, fields, limit) {
+  return createRestConnector(baseUrl, entity, fields, limit).use((0, _transforms.transformListResult)(entity, fields)).use(_pagination2.default).use((0, _utils.transformReference)(fields))(null, limit);
 };
 
 exports.list = _list;
@@ -51456,8 +51456,8 @@ exports.detail = _detail;
 
 exports.default = function (baseUrl, entity, defaultFields) {
   return {
-    list: function list(fields) {
-      return _list(baseUrl, entity, fields || defaultFields);
+    list: function list(fields, limit) {
+      return _list(baseUrl, entity, fields || defaultFields, limit);
     },
     detail: function detail(id, fields) {
       return _detail(baseUrl, (0, _inflection.singularize)(entity), fields || defaultFields, id);
@@ -51524,6 +51524,9 @@ function numberedPagination(next) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 exports.buildQuery = buildQuery;
 
 var _utils = require("../../utils");
@@ -51557,7 +51560,11 @@ function generateRequestData(queryName, args, fields) {
 
 function modifyReadRequest(entity, fields) {
   return function (req) {
-    var id = req.params.length >= 0 && parseInt(req.params[0]) || null;
+    // let id = (req.params.length >= 0 && parseInt(req.params[0])) || null;
+    var _req$params = _slicedToArray(req.params, 2),
+        id = _req$params[0],
+        limit = _req$params[1];
+
     var queryName = entity;
 
     req.queryName = queryName;
@@ -51567,11 +51574,13 @@ function modifyReadRequest(entity, fields) {
     });
 
     if (id) {
+      id = parseInt(id);
       req.data = generateRequestData(queryName, { id: id }, ["id"].concat(_toConsumableArray(transformedFields)));
     } else {
       var args = {};
       args.sort = "[$sort]";
       args.filter = "[$filter]";
+      args.limit = limit;
 
       var items = new _graphqlQuery2.default("items");
       items.find.apply(items, ["id"].concat(_toConsumableArray(transformedFields)));
@@ -51850,16 +51859,18 @@ var _utils = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createBuildQuery(fields) {
+function createBuildQuery(fields, limit) {
   // Builds a new url using the request's url, filters, pagination, and sorting
-  function urlWithQuery(req) {
+  function urlWithQuery(req, limit) {
     if (typeof req.url !== "string") {
       throw new Error("Request URL must be a string. Found " + req.url);
     }
 
-    var query = Object.assign({}, req.page && { _page: req.page }, {
-      _limit: 30
-    });
+    var query = Object.assign({}, req.page && { _page: req.page });
+
+    if (limit) {
+      query._limit = limit;
+    }
 
     if (req.filters.q) {
       query.q = req.filters.q;
@@ -51891,19 +51902,19 @@ function createBuildQuery(fields) {
   return function buildQuery(next) {
     return {
       create: function create(req) {
-        req.url = urlWithQuery(req);
+        req.url = urlWithQuery(req, limit);
         return next.create(req);
       },
       read: function read(req) {
-        req.url = urlWithQuery(req);
+        req.url = urlWithQuery(req, limit);
         return next.read(req);
       },
       update: function update(req) {
-        req.url = urlWithQuery(req);
+        req.url = urlWithQuery(req, limit);
         return next.update(req);
       },
       delete: function _delete(req) {
-        req.url = urlWithQuery(req);
+        req.url = urlWithQuery(req, limit);
         return next.delete(req);
       }
     };
@@ -51994,12 +52005,12 @@ var _utils2 = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createRestConnector(baseURL, urlPath, fields) {
-  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use(_errors2.default);
+function createRestConnector(baseURL, urlPath, fields, limit) {
+  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields, limit)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use(_errors2.default);
 }
 
-var _list = function _list(baseUrl, collection, fields) {
-  return createRestConnector(baseUrl, ":collection/", fields).use(_pagination2.default).use((0, _utils2.transformReference)(fields))(collection);
+var _list = function _list(baseUrl, collection, fields, limit) {
+  return createRestConnector(baseUrl, ":collection/", fields, limit).use(_pagination2.default).use((0, _utils2.transformReference)(fields))(collection);
 };
 
 exports.list = _list;
@@ -52009,10 +52020,10 @@ var _detail = function _detail(baseUrl, collection, id) {
 
 exports.detail = _detail;
 
-exports.default = function (baseUrl, urlPath, fields) {
+exports.default = function (baseUrl, urlPath, defaultFields) {
   return {
-    list: function list() {
-      return _list(baseUrl, urlPath, fields);
+    list: function list(fields, limit) {
+      return _list(baseUrl, urlPath, fields || defaultFields, limit);
     },
     detail: function detail(id) {
       return _detail(baseUrl, urlPath, id);
@@ -52231,16 +52242,18 @@ var _utils = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createBuildQuery(fields) {
+function createBuildQuery(fields, limit) {
   // Builds a new url using the request's url, filters, pagination, and sorting
   function urlWithQuery(req) {
     if (typeof req.url !== "string") {
       throw new Error("Request URL must be a string. Found " + req.url);
     }
 
-    var query = Object.assign({}, req.page && { page: req.page }, {
-      limit: 30
-    });
+    var query = Object.assign({}, req.page && { page: req.page });
+
+    if (limit) {
+      query.limit = limit;
+    }
 
     if (req.filters.q) {
       query.q = req.filters.q;
@@ -52318,12 +52331,12 @@ var _utils = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createRestConnector(baseURL, urlPath, fields) {
-  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use(_errors2.default);
+function createRestConnector(baseURL, urlPath, fields, limit) {
+  return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)({ baseURL: baseURL })).use((0, _buildQuery2.default)(fields, limit)).use((0, _middleware.crudToHttp)()).use((0, _middleware.url)(urlPath)).use(_errors2.default);
 }
 
-var _list = function _list(baseUrl, collection, fields) {
-  return createRestConnector(baseUrl, ":collection/", fields).use(_pagination2.default).use((0, _utils.transformReference)(fields))(collection);
+var _list = function _list(baseUrl, collection, fields, limit) {
+  return createRestConnector(baseUrl, ":collection/", fields, limit).use(_pagination2.default).use((0, _utils.transformReference)(fields))(collection);
 };
 
 exports.list = _list;
@@ -52333,10 +52346,10 @@ var _detail = function _detail(baseUrl, collection, id) {
 
 exports.detail = _detail;
 
-exports.default = function (baseUrl, urlPath, fields) {
+exports.default = function (baseUrl, urlPath, defaultFields) {
   return {
-    list: function list() {
-      return _list(baseUrl, urlPath, fields);
+    list: function list(fields, limit) {
+      return _list(baseUrl, urlPath, fields || defaultFields, limit);
     },
     detail: function detail(id) {
       return _detail(baseUrl, urlPath, id);
@@ -53576,7 +53589,7 @@ var getTabs = function getTabs(entity) {
 
 var getTab = function getTab(tab) {
   var entity = (0, _config.getEntity)(tab.reference.entity);
-  var listConnector = entity.connector.list(tab.fields);
+  var listConnector = entity.connector.list(tab.fields, 99999);
 
   var fields = tab.fields.map(function (field) {
     return (0, _fields2.getField)(field);

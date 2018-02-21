@@ -29,11 +29,11 @@ function createRestConnector(baseURL, entity, fields) {
     .use(errors);
 }
 
-export const list = (baseUrl, entity, fields) =>
-  createRestConnector(baseUrl, entity, fields)
+export const list = (baseUrl, entity, fields, limit) =>
+  createRestConnector(baseUrl, entity, fields, limit)
     .use(transformListResult(entity, fields))
     .use(numberedPagination)
-    .use(transformReference(fields))();
+    .use(transformReference(fields))(null, limit);
 
 export const detail = (baseUrl, entity, fields, id) => {
   return createRestConnector(baseUrl, entity, fields).use(
@@ -43,8 +43,8 @@ export const detail = (baseUrl, entity, fields, id) => {
 
 export default (baseUrl, entity, defaultFields) => {
   return {
-    list: fields => {
-      return list(baseUrl, entity, fields || defaultFields);
+    list: (fields, limit) => {
+      return list(baseUrl, entity, fields || defaultFields, limit);
     },
     detail: (id, fields) => {
       return detail(baseUrl, singularize(entity), fields || defaultFields, id);

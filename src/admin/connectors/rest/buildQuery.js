@@ -1,16 +1,18 @@
 import url from "url";
 import { getSearchFields } from "../utils";
 
-export default function createBuildQuery(fields) {
+export default function createBuildQuery(fields, limit) {
   // Builds a new url using the request's url, filters, pagination, and sorting
   function urlWithQuery(req) {
     if (typeof req.url !== "string") {
       throw new Error(`Request URL must be a string. Found ${req.url}`);
     }
 
-    const query = Object.assign({}, req.page && { page: req.page }, {
-      limit: 30
-    });
+    const query = Object.assign({}, req.page && { page: req.page });
+
+    if (limit) {
+      query.limit = limit;
+    }
 
     if (req.filters.q) {
       query.q = req.filters.q;
