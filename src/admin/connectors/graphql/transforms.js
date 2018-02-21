@@ -6,7 +6,6 @@ export function transformListResult(entity, fields) {
   return next => ({
     create: req => {
       return next.create(req).then(res => {
-        console.log("data:", res.data, req.queryName);
         res.data = res.data.data[req.queryName];
         return res;
       });

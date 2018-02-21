@@ -51,10 +51,14 @@ export const getReferenceLabelForField = (ref, field) => {
 };
 
 export const renderTemplate = (template, values) => {
-  let temp = _.template(template);
-  values = Object.assign({}, values, { moment, numeral });
-  let v = temp(values);
-  return v;
+  try {
+    let temp = _.template(template);
+    values = Object.assign({}, values, { moment, numeral });
+    let v = temp(values);
+    return v;
+  } catch (err) {
+    return "";
+  }
 };
 
 /**

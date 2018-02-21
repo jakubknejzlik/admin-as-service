@@ -107,6 +107,7 @@ export const getField = field => {
         field: DateTimeField,
         type: field.type,
         normalize: value => {
+          if (!value) return null;
           let m = moment(value);
           if (!m.isValid()) return null;
           // should display warning when displaying dates in different timezone!
@@ -114,6 +115,7 @@ export const getField = field => {
           return m.format("YYYY-MM-DDTHH:mm:ss");
         },
         denormalize: value => {
+          if (!value) return null;
           let m = moment(value);
           if (!m.isValid()) return null;
           return m.format();

@@ -51696,7 +51696,6 @@ function transformListResult(entity, fields) {
     return {
       create: function create(req) {
         return next.create(req).then(function (res) {
-          console.log("data:", res.data, req.queryName);
           res.data = res.data.data[req.queryName];
           return res;
         });
@@ -52964,10 +52963,14 @@ var getReferenceLabelForField = exports.getReferenceLabelForField = function get
 };
 
 var renderTemplate = exports.renderTemplate = function renderTemplate(template, values) {
-  var temp = _underscore2.default.template(template);
-  values = Object.assign({}, values, { moment: _moment2.default, numeral: _numeral2.default });
-  var v = temp(values);
-  return v;
+  try {
+    var temp = _underscore2.default.template(template);
+    values = Object.assign({}, values, { moment: _moment2.default, numeral: _numeral2.default });
+    var v = temp(values);
+    return v;
+  } catch (err) {
+    return "";
+  }
 };
 
 /**
@@ -53199,6 +53202,7 @@ var getField = exports.getField = function getField(field) {
         field: _DateTimeField2.default,
         type: field.type,
         normalize: function normalize(value) {
+          if (!value) return null;
           var m = (0, _moment2.default)(value);
           if (!m.isValid()) return null;
           // should display warning when displaying dates in different timezone!
@@ -53206,6 +53210,7 @@ var getField = exports.getField = function getField(field) {
           return m.format("YYYY-MM-DDTHH:mm:ss");
         },
         denormalize: function denormalize(value) {
+          if (!value) return null;
           var m = (0, _moment2.default)(value);
           if (!m.isValid()) return null;
           return m.format();
