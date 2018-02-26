@@ -18,7 +18,9 @@ function modifyReadRequest(entity, fields) {
   return req => {
     // let id = (req.params.length >= 0 && parseInt(req.params[0])) || null;
     let [id, limit] = req.params;
+    limit = limit || 30;
     let queryName = entity;
+    let offset = limit * ((parseInt(req.page) || 1) - 1);
 
     req.queryName = queryName;
 
@@ -37,6 +39,7 @@ function modifyReadRequest(entity, fields) {
       args.sort = "[$sort]";
       args.filter = "[$filter]";
       args.limit = limit;
+      args.offset = offset;
 
       let items = new Query("items");
       items.find("id", ...transformedFields);

@@ -51565,7 +51565,9 @@ function modifyReadRequest(entity, fields) {
         id = _req$params[0],
         limit = _req$params[1];
 
+    limit = limit || 30;
     var queryName = entity;
+    var offset = limit * ((parseInt(req.page) || 1) - 1);
 
     req.queryName = queryName;
 
@@ -51581,6 +51583,7 @@ function modifyReadRequest(entity, fields) {
       args.sort = "[$sort]";
       args.filter = "[$filter]";
       args.limit = limit;
+      args.offset = offset;
 
       var items = new _graphqlQuery2.default("items");
       items.find.apply(items, ["id"].concat(_toConsumableArray(transformedFields)));
@@ -53126,6 +53129,10 @@ var getListField = exports.getListField = function getListField(field) {
 var getValueFn = function getValueFn(field) {
   return function (values) {
     var value = values[field.attribute];
+    if (field.template) {
+      var _values = Object.assign({}, values, { value: value });
+      return (0, _utils.renderTemplate)(field.template, _values);
+    }
     switch (field.type) {
       case "date":
         return (0, _moment2.default)(value).format("LL");

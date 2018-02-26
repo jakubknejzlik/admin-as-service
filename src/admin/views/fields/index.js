@@ -4,6 +4,7 @@ import { regex_url } from "../../validation";
 import config from "../../config";
 import Joi from "joi";
 import { renderField } from "./render";
+import { renderTemplate } from "../../utils";
 import { getReferenceLabelForField } from "../../utils";
 import DateTimeField from "../../fields/DateTimeField";
 import NumberField from "../../fields/NumberField";
@@ -29,6 +30,10 @@ export const getListField = field => {
 const getValueFn = field => {
   return values => {
     const value = values[field.attribute];
+    if (field.template) {
+      let _values = Object.assign({}, values, { value: value });
+      return renderTemplate(field.template, _values);
+    }
     switch (field.type) {
       case "date":
         return moment(value).format("LL");
