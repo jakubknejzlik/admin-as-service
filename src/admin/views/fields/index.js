@@ -36,9 +36,11 @@ const getValueFn = field => {
     }
     switch (field.type) {
       case "date":
-        return moment(value).format("LL");
+        let date = moment(value);
+        return date.isValid() ? date.format("LL") : null;
       case "datetime":
-        return moment(value).format("LLL");
+        let date = moment(value);
+        return date.isValid() ? moment(value).format("LLL") : null;
     }
     return value;
   };
