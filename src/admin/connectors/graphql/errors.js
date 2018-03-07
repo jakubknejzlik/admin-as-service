@@ -9,6 +9,19 @@ export default function crudlErrors(next) {
     return error;
   }
 
+  function processGraphQLResponse(response) {
+    let errors = response.data.errors;
+    if (errors && errors.length > 0) {
+      let error = {
+        validationError: true,
+        permissionError: false,
+        errors: { _error: errors[0].message }
+      };
+      throw error;
+    }
+    return response;
+  }
+
   function processError(response) {
     if (!response) {
       throw { message: "unknown error" };
@@ -21,14 +34,30 @@ export default function crudlErrors(next) {
       case 403:
         throw { permissionError: true };
       default:
-        throw { message: response.statusText };
+        throw response;
     }
   }
 
   return {
-    create: req => next.create(req).catch(processError),
-    read: req => next.read(req).catch(processError),
-    update: req => next.update(req).catch(processError),
-    delete: req => next.delete(req).catch(processError)
+    create: req =>
+      next
+        .create(req)
+        .then(processGraphQLResponse)
+        .catch(processError),
+    read: req =>
+      next
+        .read(req)
+        .then(processGraphQLResponse)
+        .catch(processError),
+    update: req =>
+      next
+        .update(req)
+        .then(processGraphQLResponse)
+        .catch(processError),
+    delete: req =>
+      next
+        .delete(req)
+        .then(processGraphQLResponse)
+        .catch(processError)
   };
 }

@@ -39,8 +39,8 @@ const getValueFn = field => {
         let date = moment(value);
         return date.isValid() ? date.format("LL") : null;
       case "datetime":
-        let date = moment(value);
-        return date.isValid() ? moment(value).format("LLL") : null;
+        let date2 = moment(value);
+        return date2.isValid() ? date2.format("LLL") : null;
     }
     return value;
   };

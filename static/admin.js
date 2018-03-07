@@ -51217,6 +51217,19 @@ function crudlErrors(next) {
     return error;
   }
 
+  function processGraphQLResponse(response) {
+    var errors = response.data.errors;
+    if (errors && errors.length > 0) {
+      var error = {
+        validationError: true,
+        permissionError: false,
+        errors: { _error: errors[0].message }
+      };
+      throw error;
+    }
+    return response;
+  }
+
   function processError(response) {
     if (!response) {
       throw { message: "unknown error" };
@@ -51229,22 +51242,22 @@ function crudlErrors(next) {
       case 403:
         throw { permissionError: true };
       default:
-        throw { message: response.statusText };
+        throw response;
     }
   }
 
   return {
     create: function create(req) {
-      return next.create(req).catch(processError);
+      return next.create(req).then(processGraphQLResponse).catch(processError);
     },
     read: function read(req) {
-      return next.read(req).catch(processError);
+      return next.read(req).then(processGraphQLResponse).catch(processError);
     },
     update: function update(req) {
-      return next.update(req).catch(processError);
+      return next.update(req).then(processGraphQLResponse).catch(processError);
     },
     delete: function _delete(req) {
-      return next.delete(req).catch(processError);
+      return next.delete(req).then(processGraphQLResponse).catch(processError);
     }
   };
 }
@@ -51442,7 +51455,6 @@ function createRestConnector(baseURL, entity, fields) {
   })).use((0, _middleware.url)("/")).use(_errors2.default);
 }
 
-// import errors from "./errors";
 var _list = function _list(baseUrl, entity, fields, limit) {
   return createRestConnector(baseUrl, entity, fields, limit).use((0, _transforms.transformListResult)(entity, fields)).use(_pagination2.default).use((0, _utils.transformReference)(fields))(null, limit);
 };
@@ -52304,8 +52316,59 @@ function createBuildQuery(fields, limit) {
 }
 
 },{"../utils":377,"url":348}],374:[function(require,module,exports){
-arguments[4][358][0].apply(exports,arguments)
-},{"dup":358}],375:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.default = crudlErrors;
+/** middleware to transfrom express errors to crudl errors */
+function crudlErrors(next) {
+  function transformErrors(error) {
+    if (error !== null && (typeof error === "undefined" ? "undefined" : _typeof(error)) === "object") {
+      if (error.__all__) {
+        error._error = error.__all__;
+      }
+    }
+    return error;
+  }
+
+  function processError(response) {
+    if (!response) {
+      throw { message: "unknown error" };
+    }
+    switch (response.status) {
+      case 400:
+        throw { validationError: true, errors: transformErrors(response.data) };
+      case 401:
+        throw { authorizationError: true };
+      case 403:
+        throw { permissionError: true };
+      default:
+        throw { message: response.statusText };
+    }
+  }
+
+  return {
+    create: function create(req) {
+      return next.create(req).catch(processError);
+    },
+    read: function read(req) {
+      return next.read(req).catch(processError);
+    },
+    update: function update(req) {
+      return next.update(req).catch(processError);
+    },
+    delete: function _delete(req) {
+      return next.delete(req).catch(processError);
+    }
+  };
+}
+
+},{}],375:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53135,9 +53198,11 @@ var getValueFn = function getValueFn(field) {
     }
     switch (field.type) {
       case "date":
-        return (0, _moment2.default)(value).format("LL");
+        var date = (0, _moment2.default)(value);
+        return date.isValid() ? date.format("LL") : null;
       case "datetime":
-        return (0, _moment2.default)(value).format("LLL");
+        var date2 = (0, _moment2.default)(value);
+        return date2.isValid() ? date2.format("LLL") : null;
     }
     return value;
   };

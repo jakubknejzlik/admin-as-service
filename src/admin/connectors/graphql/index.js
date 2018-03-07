@@ -6,7 +6,6 @@ import {
 } from "@crudlio/crudl-connectors-base";
 import { crudToHttp, url } from "@crudlio/crudl-connectors-base/lib/middleware";
 
-// import errors from "./errors";
 import numberedPagination from "./pagination";
 import { buildQuery } from "./query";
 import { transformListResult, transformDetailResult } from "./transforms";
