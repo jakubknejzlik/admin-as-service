@@ -53572,7 +53572,7 @@ var _config = require("../config");
 
 var _utils = require("../utils");
 
-var _fields2 = require("./fields");
+var _fields3 = require("./fields");
 
 var createAddView = exports.createAddView = function createAddView(entity) {
   var connector = entity.connector.list();
@@ -53592,7 +53592,7 @@ var createAddView = exports.createAddView = function createAddView(entity) {
     }
   };
 
-  createView.fieldsets = getFieldsets(entity, "create");
+  createView.fieldsets = getFieldsets(entity, ["create", "edit"]);
 
   return createView;
 };
@@ -53637,23 +53637,77 @@ var createChangeView = exports.createChangeView = function createChangeView(enti
     }
   };
 
-  changeView.fieldsets = getFieldsets(entity, "edit");
+  changeView.fieldsets = getFieldsets(entity, ["edit"]);
 
   changeView.tabs = getTabs(entity);
 
   return changeView;
 };
 
-var getFieldsets = function getFieldsets(entity, type) {
-  var fieldsets = entity[type] && entity[type].fieldsets || entity.fieldsets;
+var getFieldsets = function getFieldsets(entity, types) {
+  var fieldsets = null;
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = types[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var _type = _step.value;
+
+      fieldsets = entity[_type] && entity[_type].fieldsets;
+      if (fieldsets) break;
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  fieldsets = fieldsets || entity.fieldsets;
   if (!fieldsets) {
-    var fields = entity[type] && entity[type].fields || entity.fields || [];
+    var fields = null;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      for (var _iterator2 = types[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var type = _step2.value;
+
+        var _fields2 = entity[type] && entity[type].fields;
+        if (_fields2) break;
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
+      }
+    }
+
+    fields = fields || entity.fields || [];
     fieldsets = [{ fields: fields }];
   }
   return fieldsets.map(function (fieldset) {
     return Object.assign({}, fieldset, {
       fields: fieldset.fields.map(function (field) {
-        return (0, _fields2.getField)(field);
+        return (0, _fields3.getField)(field);
       })
     });
   });
@@ -53669,7 +53723,7 @@ var getTab = function getTab(tab) {
   var listConnector = entity.connector.list(tab.fields, 99999);
 
   var fields = tab.fields.map(function (field) {
-    return (0, _fields2.getField)(field);
+    return (0, _fields3.getField)(field);
   });
   fields.push({ name: "id", hidden: true });
   fields.push({

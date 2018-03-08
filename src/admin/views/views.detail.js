@@ -20,7 +20,7 @@ export const createAddView = entity => {
     }
   };
 
-  createView.fieldsets = getFieldsets(entity, "create");
+  createView.fieldsets = getFieldsets(entity, ["create", "edit"]);
 
   return createView;
 };
@@ -66,17 +66,27 @@ export const createChangeView = entity => {
     }
   };
 
-  changeView.fieldsets = getFieldsets(entity, "edit");
+  changeView.fieldsets = getFieldsets(entity, ["edit"]);
 
   changeView.tabs = getTabs(entity);
 
   return changeView;
 };
 
-const getFieldsets = (entity, type) => {
-  let fieldsets = (entity[type] && entity[type].fieldsets) || entity.fieldsets;
+const getFieldsets = (entity, types) => {
+  let fieldsets = null;
+  for (let type of types) {
+    fieldsets = entity[type] && entity[type].fieldsets;
+    if (fieldsets) break;
+  }
+  fieldsets = fieldsets || entity.fieldsets;
   if (!fieldsets) {
-    let fields = (entity[type] && entity[type].fields) || entity.fields || [];
+    let fields = null;
+    for (let type of types) {
+      let fields = entity[type] && entity[type].fields;
+      if (fields) break;
+    }
+    fields = fields || entity.fields || [];
     fieldsets = [{ fields }];
   }
   return fieldsets.map(fieldset =>
