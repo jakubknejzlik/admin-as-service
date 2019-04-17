@@ -161,7 +161,8 @@ function getField(nga, field, entities) {
           field.toMany ? 'reference_many' : 'reference'
         )
         .targetEntity(entities[field.entity])
-        .targetField(nga.field(field.targetField));
+        .targetField(nga.field(field.targetField))
+        .perPage(field.perPage || 9999);
       break;
     case 'select':
       result = nga
