@@ -6,7 +6,7 @@ function createAdmin(nga, config) {
   entityNames.forEach(function(entityName) {
     var entity = nga.entity(entityName);
     var entityConfig = config.entities[entityName];
-    entity.updateMethod("patch");
+    entity.updateMethod('patch');
 
     if (entityConfig.endpoint) {
       entity.url(entityConfig.endpoint);
@@ -34,12 +34,12 @@ function createAdmin(nga, config) {
         (entityConfig.list && entityConfig.list.title) || entityConfig.name
       )
       .fields(
-        getFields(entityConfig, "list").map(function(field) {
+        getFields(entityConfig, 'list').map(function(field) {
           return getField(nga, field, entities);
         })
       )
-      .listActions(getListActions(entityConfig, "list"))
-      .actions(getActions(entityConfig, "list"));
+      .listActions(getListActions(entityConfig, 'list'))
+      .actions(getActions(entityConfig, 'list'));
 
     if (entityConfig.list && entityConfig.list.filters) {
       var filters = [];
@@ -57,7 +57,7 @@ function createAdmin(nga, config) {
         (entityConfig.create && entityConfig.create.title) || entityConfig.name
       )
       .fields(
-        getFields(entityConfig, "create").map(function(field) {
+        getFields(entityConfig, 'create').map(function(field) {
           return getField(nga, field, entities);
         })
       )
@@ -65,7 +65,7 @@ function createAdmin(nga, config) {
         window.history.back();
         return false;
       })
-      .actions(getActions(entityConfig, "create"));
+      .actions(getActions(entityConfig, 'create'));
 
     entity
       .editionView()
@@ -73,7 +73,7 @@ function createAdmin(nga, config) {
         (entityConfig.edit && entityConfig.edit.title) || entityConfig.name
       )
       .fields(
-        getFields(entityConfig, "edit").map(function(field) {
+        getFields(entityConfig, 'edit').map(function(field) {
           return getField(nga, field, entities);
         })
       )
@@ -81,7 +81,7 @@ function createAdmin(nga, config) {
         window.history.back();
         return false;
       })
-      .actions(getActions(entityConfig, "edit"));
+      .actions(getActions(entityConfig, 'edit'));
   });
 
   var menu = nga.menu();
@@ -105,11 +105,11 @@ function getFields(entity, type) {
 }
 
 function getListActions(entity, type) {
-  return _getActions(entity, type, "listActions", "xs", ["edit", "delete"]);
+  return _getActions(entity, type, 'listActions', 'xs', ['edit', 'delete']);
 }
 
 function getActions(entity, type) {
-  return _getActions(entity, type, "actions", "md", null);
+  return _getActions(entity, type, 'actions', 'md', null);
 }
 
 function _getActions(entity, type, subType, size, defaultValue) {
@@ -125,13 +125,13 @@ function _getActions(entity, type, subType, size, defaultValue) {
   }
 
   actions = actions.map(function(action) {
-    if (typeof action === "string") {
+    if (typeof action === 'string') {
       return action;
     }
-    var style = action.style || "default";
+    var style = action.style || 'default';
     var icon = action.icon;
 
-    var button = "<ma-" + action.action + "-button ";
+    var button = '<ma-' + action.action + '-button ';
     button += 'entry="entry" size="' + size + '" ';
     for (var key in action) {
       action[key] = action[key].replace(
@@ -144,7 +144,7 @@ function _getActions(entity, type, subType, size, defaultValue) {
         action[key] +
         '" ';
     }
-    button += "></ma-" + action.action + "-button>";
+    button += '></ma-' + action.action + '-button>';
     return button;
   });
 
@@ -154,29 +154,29 @@ function _getActions(entity, type, subType, size, defaultValue) {
 function getField(nga, field, entities) {
   var result = null;
   switch (field.type) {
-    case "reference":
+    case 'reference':
       result = nga
         .field(
           field.attribute || field.name,
-          field.toMany ? "reference_many" : "reference"
+          field.toMany ? 'reference_many' : 'reference'
         )
         .targetEntity(entities[field.entity])
         .targetField(nga.field(field.targetField));
       break;
-    case "select":
+    case 'select':
       result = nga
-        .field(field.attribute || field.name, "choices")
+        .field(field.attribute || field.name, 'choices')
         .choices(field.options);
       break;
-    case "choice":
+    case 'choice':
       result = nga
-        .field(field.attribute || field.name, "choice")
+        .field(field.attribute || field.name, 'choice')
         .choices(field.options);
       break;
 
-    case "choices":
+    case 'choices':
       result = nga
-        .field(field.attribute || field.name, "choices")
+        .field(field.attribute || field.name, 'choices')
         .choices(field.options);
       break;
     default:

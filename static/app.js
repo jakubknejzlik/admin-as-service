@@ -1,45 +1,45 @@
-"use strict";
+'use strict';
 
 var CONFIG = window.CONFIG;
 var BASE_URL = CONFIG.url;
 
-var modules = ["ng-admin"];
+var modules = ['ng-admin'];
 
 if (CONFIG.oauth) {
-  modules.push("ng-admin.jwt-auth");
+  modules.push('ng-admin.jwt-auth');
 }
 
-var myApp = angular.module("myApp", modules);
+var myApp = angular.module('myApp', modules);
 
-if (CONFIG.oauth && CONFIG.oauth.flow == "resourceOwnerPasswordCredentials") {
+if (CONFIG.oauth && CONFIG.oauth.flow == 'resourceOwnerPasswordCredentials') {
   myApp.config([
-    "ngAdminJWTAuthConfiguratorProvider",
+    'ngAdminJWTAuthConfiguratorProvider',
     function(ngAdminJWTAuthConfigurator) {
       ngAdminJWTAuthConfigurator.setJWTAuthURL(
         CONFIG.oauth.authorizeUrl || `${BASE_URL}/authorize`
       );
       ngAdminJWTAuthConfigurator.setCustomPayload({
-        grant_type: "password",
+        grant_type: 'password',
         client_id: CONFIG.oauth.clientId,
         client_secret: CONFIG.oauth.clientSecret,
         scope: CONFIG.oauth.scope
       });
       ngAdminJWTAuthConfigurator.setCustomAuthHeader({
-        name: "Authorization",
-        template: "Bearer {{token}}"
+        name: 'Authorization',
+        template: 'Bearer {{token}}'
       });
     }
   ]);
 } else if (CONFIG.oauth) {
   console.error(
-    "unkown oauth flow type",
-    CONFIG.oauth ? CONFIG.oauth.flow : "none"
+    'unkown oauth flow type',
+    CONFIG.oauth ? CONFIG.oauth.flow : 'none'
   );
 }
 
 myApp.config([
-  "NgAdminConfigurationProvider",
-  "RestangularProvider",
+  'NgAdminConfigurationProvider',
+  'RestangularProvider',
   function(NgAdminConfigurationProvider, RestangularProvider) {
     var nga = NgAdminConfigurationProvider;
 
@@ -51,6 +51,7 @@ myApp.config([
       headers,
       params
     ) {
+      console.log('???', element, operation, what, url, headers, params);
       if (params._page) {
         params.offset = (params._page - 1) * params._perPage;
         params.limit = params._perPage;
@@ -60,12 +61,12 @@ myApp.config([
 
       if (params._sortField) {
         params.order =
-          (params._sortDir == "ASC" ? "" : "-") + params._sortField;
+          (params._sortDir == 'ASC' ? '' : '-') + params._sortField;
         delete params._sortField;
         delete params._sortDir;
       }
 
-      if (operation == "getList") {
+      if (operation == 'getList') {
         if (params._filters) {
           for (var filter in params._filters) {
             params[filter] = params._filters[filter];
@@ -74,16 +75,16 @@ myApp.config([
         }
 
         var fieldNames = [];
-        var fields = getFields(CONFIG.entities[what], "edit");
+        var fields = getFields(CONFIG.entities[what], 'edit');
         fields.forEach(function(field) {
           fieldNames.push(field.attribute);
         });
-        params.fields = fieldNames.join(",");
+        params.fields = fieldNames.join(',');
       }
 
-      if (operation == "patch") {
+      if (operation == 'patch') {
         var newElement = {};
-        var fields = getFields(CONFIG.entities[what], "edit");
+        var fields = getFields(CONFIG.entities[what], 'edit');
         fields.forEach(function(field) {
           newElement[field.attribute] = element[field.attribute];
         });
@@ -100,9 +101,9 @@ myApp.config([
       url,
       response
     ) {
-      if (operation == "getList") {
-        var contentRange = response.headers("Content-Range");
-        response.totalCount = contentRange ? contentRange.split("/")[1] : 0;
+      if (operation == 'getList') {
+        var contentRange = response.headers('Content-Range');
+        response.totalCount = contentRange ? contentRange.split('/')[1] : 0;
       }
       return data;
     });
@@ -113,7 +114,7 @@ myApp.config([
 
     var logoutDropdown = CONFIG.oauth
       ? `<ul class="nav navbar-top-links navbar-right" style="float: right;"> <li uib-dropdown> <a uib-dropdown-toggle href="#" aria-expanded="true"> <i class="fa fa-user fa-lg"></i>&nbsp;{{username}}&nbsp;<i class="fa fa-caret-down"></i> </a> <ul class="dropdown-menu dropdown-user" role="menu"> <li><a href="#/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li> </ul> </li> </ul>`
-      : "";
+      : '';
 
     admin.header(
       `<div class="navbar-header" style="float: none">
@@ -131,30 +132,30 @@ myApp.config([
   }
 ]);
 
-myApp.controller("HeaderCtrl", [
-  "$scope",
-  "$location",
+myApp.controller('HeaderCtrl', [
+  '$scope',
+  '$location',
   function($scope, $location) {
-    $scope.username = "Me";
+    $scope.username = 'Me';
     $scope.title = CONFIG.title;
   }
 ]);
 
-myApp.directive("maRedirectButton", function() {
+myApp.directive('maRedirectButton', function() {
   return {
     scope: {
-      entry: "=",
-      title: "@",
-      style: "@",
-      size: "@",
-      icon: "@",
-      url: "@",
-      target: "@"
+      entry: '=',
+      title: '@',
+      style: '@',
+      size: '@',
+      icon: '@',
+      url: '@',
+      target: '@'
     },
     link: function(scope, element, attrs, tabsCtrl) {
-      scope.style = scope.style || "default";
+      scope.style = scope.style || 'default';
       scope.click = function() {
-        if (scope.target == "blank") {
+        if (scope.target == 'blank') {
           window.open(scope.url);
         } else {
           window.location.href = scope.url;
@@ -166,8 +167,8 @@ myApp.directive("maRedirectButton", function() {
   };
 });
 
-myApp.controller("FullScreenCtrl", function($scope) {
+myApp.controller('FullScreenCtrl', function($scope) {
   $scope.isFullscreen = function() {
-    return window.location.href.indexOf("fullscreen=true") !== -1;
+    return window.location.href.indexOf('fullscreen=true') !== -1;
   };
 });
