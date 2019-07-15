@@ -1,7 +1,14 @@
-import { createBackendConnector, createFrontendConnector } from '@crudlio/crudl-connectors-base';
-import { crudToHttp, transformData, url } from '@crudlio/crudl-connectors-base/lib/middleware';
-import jwt from 'jsonwebtoken';
+import {
+  createBackendConnector,
+  createFrontendConnector
+} from '@crudlio/crudl-connectors-base';
+import {
+  crudToHttp,
+  transformData,
+  url
+} from '@crudlio/crudl-connectors-base/lib/middleware';
 
+import jwt from 'jsonwebtoken';
 import restErrors from '../rest/errors';
 
 export const password = config =>
@@ -11,9 +18,11 @@ export const password = config =>
     .use(next => {
       return {
         create: req => {
-          req.headers["content-type"] =
-            "application/x-www-form-urlencoded;charset=utf-8";
+          req.headers['content-type'] =
+            'application/x-www-form-urlencoded;charset=utf-8';
 
+          req.headers['authorization'] =
+            'Basic ' + btoa(`${config.clientId}:${config.clientSecret}`);
           req.data.grant_type = config.grantType;
           req.data.client_id = config.clientId;
           req.data.client_secret = config.clientSecret;
@@ -25,7 +34,7 @@ export const password = config =>
     })
     .use(restErrors) // rest-api errors
     .use(
-      transformData("create", data => {
+      transformData('create', data => {
         var userInfo = jwt.decode(data.access_token);
         userInfo = userInfo.user || userInfo;
         userInfo.access_token = data.access_token;
@@ -43,14 +52,14 @@ const serialize = function(obj, prefix) {
     p;
   for (p in obj) {
     if (obj.hasOwnProperty(p)) {
-      var k = prefix ? prefix + "[" + p + "]" : p,
+      var k = prefix ? prefix + '[' + p + ']' : p,
         v = obj[p];
       str.push(
-        v !== null && typeof v === "object"
+        v !== null && typeof v === 'object'
           ? serialize(v, k)
-          : encodeURIComponent(k) + "=" + encodeURIComponent(v)
+          : encodeURIComponent(k) + '=' + encodeURIComponent(v)
       );
     }
   }
-  return str.join("&");
+  return str.join('&');
 };
