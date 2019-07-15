@@ -325,127 +325,112 @@ exports.crudToHttp = _crudToHttp2.default;
 exports.url = _url2.default;
 exports.transformData = _transformData2.default;
 },{"./crudToHttp":5,"./transformData":7,"./url":8}],7:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.default = transformData;
 /**
- * Creates a transformData middleware
- * @methodRegExp Which methods should be transformed e.g. 'create|update'
- * @transform The transform function
- */
+* Creates a transformData middleware
+* @methodRegExp Which methods should be transformed e.g. 'create|update'
+* @transform The transform function
+*/
 function transformData(methodRegExp) {
-  var transform =
-    arguments.length > 1 && arguments[1] !== undefined
-      ? arguments[1]
-      : function(data) {
-          return data;
-        };
-
-  var re = new RegExp(methodRegExp || ".*");
-
-  // The middleware function
-  return function transformDataMiddleware(next) {
-    // Checks if the call should be transformed. If yes, it applies the transform function
-    function checkAndTransform(method) {
-      return re.test(method)
-        ? function(req) {
-            return next[method](req).then(function(res) {
-              return Object.assign(res, { data: transform(res.data) });
-            });
-          }
-        : function(req) {
-            return next[method](req);
-          };
-    }
-
-    // The middleware connector:
-    return {
-      create: checkAndTransform("create"),
-      read: checkAndTransform("read"),
-      update: checkAndTransform("update"),
-      delete: checkAndTransform("delete")
+    var transform = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (data) {
+        return data;
     };
-  };
-}
 
+    var re = new RegExp(methodRegExp || '.*');
+
+    // The middleware function
+    return function transformDataMiddleware(next) {
+        // Checks if the call should be transformed. If yes, it applies the transform function
+        function checkAndTransform(method) {
+            return re.test(method) ? function (req) {
+                return next[method](req).then(function (res) {
+                    return Object.assign(res, { data: transform(res.data) });
+                });
+            } : function (req) {
+                return next[method](req);
+            };
+        }
+
+        // The middleware connector:
+        return {
+            create: checkAndTransform('create'),
+            read: checkAndTransform('read'),
+            update: checkAndTransform('update'),
+            delete: checkAndTransform('delete')
+        };
+    };
+}
 },{}],8:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.default = url;
 
-var _url = require("url");
+var _url = require('url');
 
-var _pathToRegexp = require("path-to-regexp");
+var _pathToRegexp = require('path-to-regexp');
 
 var _pathToRegexp2 = _interopRequireDefault(_pathToRegexp);
 
-var _consumeParams = require("../consumeParams");
+var _consumeParams = require('../consumeParams');
 
 var _consumeParams2 = _interopRequireDefault(_consumeParams);
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function resolveParams(path, req) {
-  var resolved = {};
-  var keys = [];
-  (0, _pathToRegexp2.default)(path, keys);
+    var resolved = {};
+    var keys = [];
+    (0, _pathToRegexp2.default)(path, keys);
 
-  var params = (0, _consumeParams2.default)(req, keys.length);
+    var params = (0, _consumeParams2.default)(req, keys.length);
 
-  // Take the keys and associate them with the request params
-  keys.forEach(function(key, index) {
-    resolved[key.name] = params[index];
-  });
+    // Take the keys and associate them with the request params
+    keys.forEach(function (key, index) {
+        resolved[key.name] = params[index];
+    });
 
-  return resolved;
+    return resolved;
 }
 
 function resolvePath(path, req) {
-  try {
-    var parsed = (0, _url.parse)(path, true);
-    var params = resolveParams(parsed.pathname, req);
+    try {
+        var parsed = (0, _url.parse)(path, true);
+        var params = resolveParams(parsed.pathname, req);
 
-    parsed.pathname = _pathToRegexp2.default.compile(parsed.pathname)(params);
+        parsed.pathname = _pathToRegexp2.default.compile(parsed.pathname)(params);
 
-    return (0, _url.format)(parsed);
-  } catch (e) {
-    throw new Error(
-      "Could not resolve the url path '" + path + "'. (" + e + ")."
-    );
-  }
+        return (0, _url.format)(parsed);
+    } catch (e) {
+        throw new Error('Could not resolve the url path \'' + path + '\'. (' + e + ').');
+    }
 }
 
 function url(path) {
-  return function urlMiddleware(next) {
-    return {
-      create: function create(req) {
-        req.url = resolvePath(path, req);
-        return next.create(req);
-      },
-      read: function read(req) {
-        req.url = resolvePath(path, req);
-        return next.read(req);
-      },
-      update: function update(req) {
-        req.url = resolvePath(path, req);
-        return next.update(req);
-      },
-      delete: function _delete(req) {
-        req.url = resolvePath(path, req);
-        return next.delete(req);
-      }
+    return function urlMiddleware(next) {
+        return {
+            create: function create(req) {
+                req.url = resolvePath(path, req);return next.create(req);
+            },
+            read: function read(req) {
+                req.url = resolvePath(path, req);return next.read(req);
+            },
+            update: function update(req) {
+                req.url = resolvePath(path, req);return next.update(req);
+            },
+            delete: function _delete(req) {
+                req.url = resolvePath(path, req);return next.delete(req);
+            }
+        };
     };
-  };
 }
-
 },{"../consumeParams":1,"path-to-regexp":292,"url":348}],9:[function(require,module,exports){
 module.exports = require('./lib/axios');
 },{"./lib/axios":11}],10:[function(require,module,exports){
@@ -18082,7 +18067,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.0",
-      "/Users/jakubknejzlik/Projects/github/jakubknejzlik/admin-as-service"
+      "/Users/jakubknejzlik/projects/github.com/jakubknejzlik/admin-as-service"
     ]
   ],
   "_development": true,
@@ -18108,7 +18093,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz",
   "_spec": "6.4.0",
-  "_where": "/Users/jakubknejzlik/Projects/github/jakubknejzlik/admin-as-service",
+  "_where": "/Users/jakubknejzlik/projects/github.com/jakubknejzlik/admin-as-service",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -29503,7 +29488,7 @@ module.exports={
   "_args": [
     [
       "joi@13.0.2",
-      "/Users/jakubknejzlik/Projects/github/jakubknejzlik/admin-as-service"
+      "/Users/jakubknejzlik/projects/github.com/jakubknejzlik/admin-as-service"
     ]
   ],
   "_from": "joi@13.0.2",
@@ -29527,7 +29512,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/joi/-/joi-13.0.2.tgz",
   "_spec": "13.0.2",
-  "_where": "/Users/jakubknejzlik/Projects/github/jakubknejzlik/admin-as-service",
+  "_where": "/Users/jakubknejzlik/projects/github.com/jakubknejzlik/admin-as-service",
   "bugs": {
     "url": "https://github.com/hapijs/joi/issues"
   },
@@ -52203,8 +52188,9 @@ var password = exports.password = function password(config) {
   return (0, _crudlConnectorsBase.createFrontendConnector)((0, _crudlConnectorsBase.createBackendConnector)()).use((0, _middleware.url)(config.authorizeUrl)).use((0, _middleware.crudToHttp)()).use(function (next) {
     return {
       create: function create(req) {
-        req.headers["content-type"] = "application/x-www-form-urlencoded;charset=utf-8";
+        req.headers['content-type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 
+        req.headers['authorization'] = 'Basic ' + btoa(config.clientId + ':' + config.clientSecret);
         req.data.grant_type = config.grantType;
         req.data.client_id = config.clientId;
         req.data.client_secret = config.clientSecret;
@@ -52214,7 +52200,7 @@ var password = exports.password = function password(config) {
       }
     };
   }).use(_errors2.default) // rest-api errors
-  .use((0, _middleware.transformData)("create", function (data) {
+  .use((0, _middleware.transformData)('create', function (data) {
     var userInfo = _jsonwebtoken2.default.decode(data.access_token);
     userInfo = userInfo.user || userInfo;
     userInfo.access_token = data.access_token;
@@ -52232,12 +52218,12 @@ var serialize = function serialize(obj, prefix) {
       p;
   for (p in obj) {
     if (obj.hasOwnProperty(p)) {
-      var k = prefix ? prefix + "[" + p + "]" : p,
+      var k = prefix ? prefix + '[' + p + ']' : p,
           v = obj[p];
-      str.push(v !== null && (typeof v === 'undefined' ? 'undefined' : _typeof(v)) === "object" ? serialize(v, k) : encodeURIComponent(k) + "=" + encodeURIComponent(v));
+      str.push(v !== null && (typeof v === 'undefined' ? 'undefined' : _typeof(v)) === 'object' ? serialize(v, k) : encodeURIComponent(k) + '=' + encodeURIComponent(v));
     }
   }
-  return str.join("&");
+  return str.join('&');
 };
 
 },{"../rest/errors":374,"@crudlio/crudl-connectors-base":4,"@crudlio/crudl-connectors-base/lib/middleware":6,"jsonwebtoken":203}],373:[function(require,module,exports){
