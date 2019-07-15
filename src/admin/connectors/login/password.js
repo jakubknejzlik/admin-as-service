@@ -38,6 +38,7 @@ export const password = config =>
         var userInfo = jwt.decode(data.access_token);
         userInfo = userInfo.user || userInfo;
         userInfo.access_token = data.access_token;
+        userInfo.username = userInfo.username || ' ';
         return {
           requestHeaders: {
             Authorization: `Bearer ${data.access_token}`
