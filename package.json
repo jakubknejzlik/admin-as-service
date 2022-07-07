@@ -7,7 +7,7 @@
     "express": "^4.15.3",
     "express-graceful-exit": "^0.4.0",
     "js-yaml": "^3.8.4",
-    "moment": "^2.18.1",
+    "moment": "^2.29.4",
     "ng-admin": "^1.0.6",
     "numeral": "^2.0.6"
   },
