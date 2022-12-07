@@ -4,7 +4,7 @@
   "license": "MIT",
   "dependencies": {
     "angular": "^1.6.6",
-    "express": "^4.15.3",
+    "express": "^4.17.3",
     "express-graceful-exit": "^0.4.0",
     "js-yaml": "^3.8.4",
     "moment": "^2.18.1",
